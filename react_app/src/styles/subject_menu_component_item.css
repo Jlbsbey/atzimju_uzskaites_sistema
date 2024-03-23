@@ -1,0 +1,5 @@
+.subject_menu_component_item {
+	cursor: crosshair;
+	overflow: hidden;
+	max-height: 350px;
+}
