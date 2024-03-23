@@ -1,0 +1,52 @@
+/* Layout variables */
+
+:root {
+	--padding-y: 25px;
+}
+
+@media (min-width: 576px) {
+	:root {
+		--padding-y: 50px;
+	}
+}
+
+@media (min-width: 1280px) {
+	:root {
+		--padding-y: clamp(50px, calc((100vw - 1280px) / 2), 1000px);
+	}
+}
+
+/* Menu */
+
+.menu {
+	width: 100%;
+	height: 45px;
+
+	padding: 0 var(--padding-y);
+
+	background-color: #ffffff;
+	border-bottom: 1px solid #a9a9a9;
+	box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
+}
+
+.menu-logo {
+	color: #363636;
+	font-weight: 900;
+	font-size: 1.2rem;
+	text-decoration: none;
+}
+
+/* Content container */
+
+.content {
+	width: 100%;
+	height: calc(100% - 45px);
+
+	padding: 40px var(--padding-y) 0 var(--padding-y);
+
+	background-color: #faf7f7;
+	background-image: url("../assets/images/background_pattern.png");
+}
+
+
+
