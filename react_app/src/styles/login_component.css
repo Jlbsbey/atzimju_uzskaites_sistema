@@ -1,0 +1,12 @@
+.input-container {
+	max-width: 500px;
+}
+
+.login-button {
+	width: 100%;
+}
+
+.login-alert {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
