@@ -1,21 +1,25 @@
 import React, {useState} from "react";
 import "../styles/login_component.css";
+import {user_login} from "../scripts/login";
 
-const LoginComponent: React.FC = () => {
+const Login: React.FC = () => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 
 	const submit = () => {
-		console.log("login as" + username + " with password " + password);
-		setError("Invalid username or password");
+		if (user_login(username, password)) {
+			window.location.href = "/main";
+		} else {
+			setError("Invalid username or password");
+		}
 	}
 
 	return (
 		<div className="input-container">
 
 			{error === '' ? null : (
-				<div className="login-alert alert alert-warning mb-4" role="alert">
+				<div className="login-alert alert alert-warning" role="alert">
 					{error}
 				</div>
 			)}
@@ -44,11 +48,11 @@ const LoginComponent: React.FC = () => {
 				className="btn btn-outline-primary login-button"
 				onClick={submit}
 			>
-				Log in to Grade
+				Go to Grade
 			</button>
 
 		</div>
 	);
 }
 
-export default LoginComponent;
+export default Login;
