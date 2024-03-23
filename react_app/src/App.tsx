@@ -1,16 +1,25 @@
 import React from 'react';
-import './styles/App.css';
+import Login from "./components/Login";
+import {BrowserRouter, Routes, Route} from "react-router-dom";
+import "./styles/global.css";
 import "bootstrap/dist/js/bootstrap.bundle.js.map";
 import "bootstrap/dist/css/bootstrap.min.css";
-import LoginComponent from "./components/LoginComponent";
+import Layout from "./components/Layout";
+import LoginPage from "./pages/LoginPage";
+import MainPage from "./pages/MainPage";
 
 function App() {
 	return (
-		<div className="App">
-
-			<LoginComponent/>
-
-		</div>
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" element={<Layout />}>
+					<Route index element={<LoginPage />} />
+					<Route path="main" element={<MainPage />} />
+					<Route path="contact" element={<Login />} />
+					<Route path="*" element={<Login />} />
+				</Route>
+			</Routes>
+		</BrowserRouter>
 	);
 }
 
