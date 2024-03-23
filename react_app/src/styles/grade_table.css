@@ -1,0 +1,12 @@
+.grade-table {
+	width: auto !important;
+}
+
+.grade-table-t-first {
+	padding-left: 30px !important;
+}
+
+.grade-table th, .grade-table td {
+	padding-right: 60px;
+}
+
