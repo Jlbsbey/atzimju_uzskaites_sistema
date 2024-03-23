@@ -1,0 +1,24 @@
+.main-page {
+	width: 100%;
+	height: 100%;
+
+	display: flex;
+	flex-direction: row;
+}
+
+.left-menu {
+	min-width: 20%;
+	max-width: 25%;
+	height: 100%;
+
+	background-color: #f0f0f0;
+	box-shadow: 0 0 16px rgba(0, 0, 0, 0.03);
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+}
+
+.right-content {
+	height: 100%;
+
+	padding-left: 20px;
+}
