@@ -22,12 +22,16 @@ func main() {
 	(*cfg).Passwd = "root"
 	(*cfg).Net = "tcp"
 	(*cfg).DBName = "grade"
+	(*cfg).ParseTime = true
 	var err error
 	db, err = sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	/*session := ExecLogin()
+	print(session)
+	HomePage(session)*/
 	router := mux.NewRouter()
 	router.HandleFunc("/login", ExecLogin).Methods("GET")
 	router.HandleFunc("/home", HomePage).Methods("GET")

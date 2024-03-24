@@ -12,27 +12,29 @@ type Mark struct {
 	number     byte
 	studentID  string
 	profID     string
-	createDate time.Time
-	editDate   time.Time
+	createDate string
+	editDate   string
 	markID     string
 	subject    string
 }
 
 var role string
 
-func HomePage(w http.ResponseWriter, r *http.Request) {
+func HomePage(w http.ResponseWriter, r *http.Request /*session string*/) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
 	fmt.Println(session)
 	userID := getUserID(session)
 	if userID == "" {
 		w.Write([]byte("auth:404")) //истекло время сессии или пользователь не был найден по сессии
-		return
+		//print("wrong userid")
+		//return
 	}
 	subjects := getSubjects(userID)
 	if len(subjects) == 0 {
 		w.Write([]byte("auth:405")) //предметов нет у этого человека, выводи сообщение что бы админ их добавил
-		return
+		//print("no subjects")
+		//return
 	}
 	var response []Mark
 	for i := 0; i < len(subjects); i++ {
@@ -41,6 +43,17 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 			response = append(response, markarr[j])
 		}
 	}
+	/*for i := 0; i < len(response); i++ {
+		println("Mark ", i)
+		println("MarkID", response[i].markID)
+		println("StudID", response[i].studentID)
+		println("ProfID", response[i].profID)
+		println("CreateDate", response[i].createDate)
+		println("EditDate", response[i].editDate)
+		println("subject", response[i].subject)
+		println("number", response[i].number)
+		println("___________________________")
+	}*/
 	responseString, err := json.Marshal(response)
 	if err != nil {
 		panic(err)
@@ -56,17 +69,19 @@ func getMarks(subject string, role string, userID string) []Mark {
 	if role == "stud" {
 		query := `SELECT markID, profID, mark, createDate, editDate FROM marks WHERE subjID = ? AND studID = ?`
 		lg, err := db.Query(query, subject, userID)
-		var marks []Mark
 		if err != nil {
 			panic(err)
 		}
 		var prof string
 		for lg.Next() {
-			if err = lg.Scan(&markID, prof, number, create, edit); err != nil {
+			if err = lg.Scan(&markID, &prof, &number, &create, &edit); err != nil {
 				log.Println(err)
 			}
-			marks = append(marks, Mark{markID: markID, studentID: "", profID: prof, number: number, createDate: create, editDate: edit, subject: subject})
+			createTimeformat := create.Format("2006-01-02 15:04:05")
+			editTimeFormat := create.Format("2006-01-02 15:04:05")
+			marks = append(marks, Mark{markID: markID, studentID: "", profID: prof, number: number, createDate: createTimeformat, editDate: editTimeFormat, subject: subject})
 		}
+		return marks
 	}
 	query := `SELECT markID, studID, mark, createDate, editDate FROM marks WHERE subjID = ? AND profID = ?`
 	lg, err := db.Query(query, subject, userID)
@@ -75,10 +90,13 @@ func getMarks(subject string, role string, userID string) []Mark {
 	}
 	var stud string
 	for lg.Next() {
-		if err = lg.Scan(&markID, stud, number, create, edit); err != nil {
+		if err = lg.Scan(&markID, &stud, &number, &create, &edit); err != nil {
 			log.Println(err)
 		}
-		marks = append(marks, Mark{markID: markID, studentID: stud, profID: "", number: number, createDate: create, editDate: edit, subject: subject})
+
+		createTimeformat := create.Format("2006-01-02 15:04:05")
+		editTimeFormat := create.Format("2006-01-02 15:04:05")
+		marks = append(marks, Mark{markID: markID, studentID: stud, profID: "", number: number, createDate: createTimeformat, editDate: editTimeFormat, subject: subject})
 	}
 	return marks
 
@@ -118,7 +136,7 @@ func getSubjects(userID string) []string {
 }
 
 func getUserID(session string) string {
-	query := `SELECT login, expire FROM sessions WHERE session = ?`
+	query := `SELECT login, expire FROM sessions WHERE sessionID = ?`
 	lg, err := db.Query(query, session)
 	var DBexpire time.Time
 	var login string
