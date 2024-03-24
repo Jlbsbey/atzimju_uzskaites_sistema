@@ -8,9 +8,14 @@ const Layout = () => {
 				<a className="menu-logo" href="/">
 					Grade
 				</a>
-				<a className="menu-link" href="/my-profile/">
-					Grade
-				</a>
+				<div>
+					<a className="menu-link" href="/main/">
+						Grades
+					</a>
+					<a className="menu-link" href="/my-profile/">
+						My Profile
+					</a>
+				</div>
 			</div>
 
 			<div className="content">
