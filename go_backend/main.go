@@ -8,6 +8,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/argon2"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -32,7 +33,7 @@ func main() {
 	router.HandleFunc("/home", HomePage).Methods("GET")
 
 	// Start the HTTP server
-	//log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
 func returnSomething(w http.ResponseWriter, r *http.Request) {
