@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
+import The404Page from "./pages/The404Page";
 
 function App() {
 	return (
@@ -16,7 +17,7 @@ function App() {
 					<Route index element={<LoginPage />} />
 					<Route path="main" element={<MainPage />} />
 					<Route path="contact" element={<Login />} />
-					<Route path="*" element={<Login />} />
+					<Route path="*" element={<The404Page />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>
