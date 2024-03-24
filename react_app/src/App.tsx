@@ -1,5 +1,4 @@
 import React from 'react';
-import Login from "./components/Login";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import "./styles/global.css";
 import "bootstrap/dist/js/bootstrap.bundle.js.map";
@@ -16,7 +15,6 @@ function App() {
 				<Route path="/" element={<Layout />}>
 					<Route index element={<LoginPage />} />
 					<Route path="main" element={<MainPage />} />
-					<Route path="contact" element={<Login />} />
 					<Route path="*" element={<The404Page />} />
 				</Route>
 			</Routes>
