@@ -3,6 +3,8 @@ import "../styles/main_page.css";
 import SubjectsMenu from "../components/SubjectsMenu";
 import {grades, subjects} from "../scripts/data";
 import GradeTable from "../components/GradeTable";
+import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
 
 const MainPage: React.FC = () => {
 	const [activeSubject, setActiveSubject] = useState(subjects[0]);
@@ -11,9 +13,13 @@ const MainPage: React.FC = () => {
 		<div className="main-page">
 
 			<div className="left-menu">
-				<SubjectsMenu
-					onSubjectClick={(subject) => setActiveSubject(subject)}
-					/>
+				<SimpleBar
+					style={{ maxHeight: "100%", height: "100%", width: "100%"}}
+				>
+					<SubjectsMenu
+						onSubjectClick={(subject) => setActiveSubject(subject)}
+						/>
+				</SimpleBar>
 			</div>
 
 			<div className="right-content">
