@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import '../styles/subject_menu_component.css';
 import SubjectsMenuItem from "./SubjectsMenuItem";
 import {Subject, subjects} from "../scripts/data";
 
