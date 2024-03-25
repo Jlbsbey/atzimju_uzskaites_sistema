@@ -17,9 +17,9 @@ var db *sql.DB
 
 func main() {
 	cfg := mysql.NewConfig()
-	(*cfg).User = "root"
-	(*cfg).Addr = "localhost"
-	(*cfg).Passwd = "root"
+	(*cfg).User = "remote"
+	(*cfg).Addr = "https://104.248.86.80"
+	(*cfg).Passwd = "ts32YQ?!Twa2$Ej"
 	(*cfg).Net = "tcp"
 	(*cfg).DBName = "grade"
 	(*cfg).ParseTime = true
