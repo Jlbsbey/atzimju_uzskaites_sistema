@@ -28,4 +28,9 @@ jobs:
             
             # Build go_backend
             cd ../go_backend
-            go build 
+            go build
+            sudo cp main /home/backend/grade/go_backend/
+            
+            # Restart go_backend
+            sudo service grade-go_backend stop
+            sudo service grade-go_backend start
