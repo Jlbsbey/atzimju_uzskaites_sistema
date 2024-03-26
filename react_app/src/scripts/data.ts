@@ -42,7 +42,7 @@ export const subjects : Subject[] = [
 		is_active: false,
 	},
 	{
-		subject_id: 1,
+		subject_id: 4,
 		name: "Mathematics",
 		description: "The basics of mathematics with extended probability theory.",
 		last_updated: "1",
@@ -50,7 +50,7 @@ export const subjects : Subject[] = [
 		is_active: true,
 	},
 	{
-		subject_id: 2,
+		subject_id: 5,
 		name: "Calculus",
 		description: "Calculus theory with practical examples.",
 		last_updated: "2",
@@ -58,7 +58,7 @@ export const subjects : Subject[] = [
 		is_active: false,
 	},
 	{
-		subject_id: 3,
+		subject_id: 6,
 		name: "Hebrew",
 		description: "עברית, שפה שמית, היא השפה הכנענית היחידה החיה.",
 		last_updated: "5",
@@ -66,7 +66,7 @@ export const subjects : Subject[] = [
 		is_active: false,
 	},
 	{
-		subject_id: 1,
+		subject_id: 7,
 		name: "Mathematics",
 		description: "The basics of mathematics with extended probability theory.",
 		last_updated: "1",
@@ -74,7 +74,7 @@ export const subjects : Subject[] = [
 		is_active: true,
 	},
 	{
-		subject_id: 2,
+		subject_id: 8,
 		name: "Calculus",
 		description: "Calculus theory with practical examples.",
 		last_updated: "2",
@@ -82,7 +82,7 @@ export const subjects : Subject[] = [
 		is_active: false,
 	},
 	{
-		subject_id: 3,
+		subject_id: 9,
 		name: "Hebrew",
 		description: "עברית, שפה שמית, היא השפה הכנענית היחידה החיה.",
 		last_updated: "5",
@@ -90,7 +90,7 @@ export const subjects : Subject[] = [
 		is_active: false,
 	},
 	{
-		subject_id: 1,
+		subject_id: 10,
 		name: "Mathematics",
 		description: "The basics of mathematics with extended probability theory.",
 		last_updated: "1",
@@ -98,7 +98,7 @@ export const subjects : Subject[] = [
 		is_active: true,
 	},
 	{
-		subject_id: 2,
+		subject_id: 11,
 		name: "Calculus",
 		description: "Calculus theory with practical examples.",
 		last_updated: "2",
@@ -106,7 +106,7 @@ export const subjects : Subject[] = [
 		is_active: false,
 	},
 	{
-		subject_id: 3,
+		subject_id: 12,
 		name: "Hebrew",
 		description: "עברית, שפה שמית, היא השפה הכנענית היחידה החיה.",
 		last_updated: "5",
