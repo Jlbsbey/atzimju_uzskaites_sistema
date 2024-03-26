@@ -28,4 +28,4 @@ jobs:
             
             # Build go_backend
             cd ../go_backend
-            go build 
+            go build
