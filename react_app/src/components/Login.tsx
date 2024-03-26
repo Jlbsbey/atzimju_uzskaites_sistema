@@ -55,7 +55,7 @@ const Login: React.FC = () => {
 				className="btn btn-outline-primary login-button"
 				onClick={submit}
 			>
-				Go to Grade
+				Go to Grade test
 			</button>
 
 		</div>
