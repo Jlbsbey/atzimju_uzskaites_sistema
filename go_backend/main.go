@@ -2,12 +2,10 @@ package main
 
 import (
 	"database/sql"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
-	"golang.org/x/crypto/argon2"
 	"log"
 	"net/http"
 	"strconv"
@@ -18,7 +16,7 @@ var db *sql.DB
 func main() {
 	cfg := mysql.NewConfig()
 	(*cfg).User = "remote"
-	(*cfg).Addr = "https://104.248.86.80"
+	(*cfg).Addr = "104.248.86.80:3306"
 	(*cfg).Passwd = "ts32YQ?!Twa2$Ej"
 	(*cfg).Net = "tcp"
 	(*cfg).DBName = "grade"
@@ -50,9 +48,4 @@ func returnSomething(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode("Hello World !, user " + strconv.Itoa(id))
-}
-
-func hashPassword(password string, salt string) string {
-	key := argon2.IDKey([]byte(password), []byte(salt), 1, 64*1024, 4, 32)
-	return hex.EncodeToString(key)
 }

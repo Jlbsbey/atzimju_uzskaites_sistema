@@ -2,109 +2,146 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"golang.org/x/crypto/argon2"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
-func ExecLogin(w http.ResponseWriter, r *http.Request) /*string*/ {
+// Response interface
+type Response struct {
+	LoginStatus bool   `json:"login_status"`
+	SessionKey  string `json:"session_key"`
+}
+
+func ExecLogin(w http.ResponseWriter, r *http.Request) {
+	// Get arguments from URL
 	queryParams := r.URL.Query()
-	URLlog := queryParams.Get("login")
-	URLpas := queryParams.Get("password")
-	/*URLlog := "Hz4Ever"
-	URLpas := "1234"*/
-	salt := getSalt(URLlog)
-	hashedPasw := hashPassword(URLpas, salt)
-	session := checkLogin(hashedPasw, URLlog, salt)
-	if session == "" {
-		//print("auth: -1")
-		w.Write([]byte("auth:-1"))
-		//return ""
+	login := queryParams.Get("login")
+	password := queryParams.Get("password")
+	fmt.Println("> User [ " + login + "] is trying to log in with password [ " + password + " ].")
+
+	// Get salt from database
+	salt := getUserSalt(login)
+
+	// Hash password
+	var hashedPassword = hashPassword(password, salt)
+
+	// Check if login is correct and get session
+	isLoggedIn, userId := tryLogin(login, hashedPassword, salt)
+
+	// If login is correct, create session
+	var sessionKey string
+	if isLoggedIn {
+		sessionKey = createSession(userId)
 	}
-	//return session
-	responseString := fmt.Sprintf("auth: %s", session)
-	w.Write([]byte(responseString))
+
+	// Send response
+	var response = Response{LoginStatus: isLoggedIn, SessionKey: sessionKey}
+	json.NewEncoder(w).Encode(response)
+
+	fmt.Println("> User [ " + login + "] logged in: [ " + strconv.FormatBool(isLoggedIn) + " ].")
 }
 
-func checkLogin(passw string, login string, salt string) string {
-	DBlogin := ""
-	DBpassw := ""
-	query := `SELECT studID, password FROM student WHERE studID = ? AND password = ?`
-	lg, err := db.Query(query, login, passw)
-	if err != nil {
-		panic(err)
-	}
-	for lg.Next() {
-		if err = lg.Scan(&DBlogin, &DBpassw); err != nil {
-			log.Println(err)
-		}
-		if login == DBlogin && passw == DBpassw {
-			currentTime := time.Now()
-			sessionNum := hashPassword(currentTime.String(), salt)
-			sessiontoDB(sessionNum, currentTime, login)
-			return sessionNum
-		}
-	}
-	if DBlogin == "" {
-		query := `SELECT studID, password FROM prof WHERE profID = ? AND password = ?`
-		lg, err := db.Query(query, login)
-		if err != nil {
-			panic(err)
-		}
-		for lg.Next() {
-			if err = lg.Scan(&DBlogin, &DBpassw); err != nil {
-				log.Println(err)
-			}
-			if login == DBlogin && passw == DBpassw {
-				if err = lg.Scan(&DBlogin, &DBpassw); err != nil {
-					log.Println(err)
-				}
-				if login == DBlogin && passw == DBpassw {
-					currentTime := time.Now()
-					sessionNum := hashPassword(currentTime.String(), salt)
-					sessiontoDB(sessionNum, currentTime, login)
-					return sessionNum
-				}
-			}
-		}
-	}
-	return ""
-}
-
-func sessiontoDB(session string, now time.Time, login string) {
-	query := `INSERT INTO sessions(sessionID, login, expire ) VALUES (?, ?, ?)`
-	expirationTime := now.Add(1 * time.Hour)
-	formatted := expirationTime.Format("2006-01-02 15:04:05")
-	_, err := db.ExecContext(context.Background(), query, session, login, formatted)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func getSalt(login string) string {
-	salt := ""
-	query := `SELECT salt FROM student WHERE studID = ?`
+func tryLogin(login, hashedPassword, salt string) (isLoggedIn bool, userId string) {
+	// Get login details from database
+	var query = `SELECT user_id, password FROM login_details WHERE login = ?`
 	lg, err := db.Query(query, login)
 	if err != nil {
 		panic(err)
 	}
+
+	// Check if login is correct
+	var databasePassword string
 	for lg.Next() {
-		if err = lg.Scan(&salt); err != nil {
+		if err = lg.Scan(&userId, &databasePassword); err != nil {
+			log.Println(err)
+		}
+
+		if hashedPassword == databasePassword {
+			isLoggedIn = true
+		}
+	}
+
+	return isLoggedIn, userId
+}
+
+func createSession(userId string) (sessionKey string) {
+	// Generate session key - cryptographic sha256 hash
+	for {
+		sessionKey, _ = generateRandomString(256)
+		if !sessionExists(sessionKey) {
+			break
+		}
+	}
+
+	var expirationTime = time.Now().Add(time.Hour * 24)
+	var formattedExpirationTime = expirationTime.Format("2006-01-02 15:04:05")
+
+	query := `INSERT INTO sessions(session_key, user_id, expire_time) VALUES (?, ?, ?)`
+	_, err := db.ExecContext(context.Background(), query, sessionKey, userId, formattedExpirationTime)
+	if err != nil {
+		panic(err)
+	}
+
+	return sessionKey
+}
+
+func sessionExists(newSessionKey string) bool {
+	// Check if session exists
+	var query = `SELECT session_key FROM sessions WHERE session_key = ?`
+	lg, err := db.Query(query, newSessionKey)
+	if err != nil {
+		panic(err)
+	}
+
+	// Check if session exists
+	var sessionKey = ""
+	for lg.Next() {
+		if err = lg.Scan(&sessionKey); err != nil {
+			log.Println(err)
+		}
+
+		if sessionKey == newSessionKey {
+			return true
+		}
+	}
+	return false
+}
+
+func getUserSalt(login string) string {
+	var passwordSalt = ""
+
+	var query = `SELECT password_salt FROM login_details WHERE login = ?`
+	lg, err := db.Query(query, login)
+	if err != nil {
+		panic(err)
+	}
+
+	for lg.Next() {
+		if err = lg.Scan(&passwordSalt); err != nil {
 			log.Println(err)
 		}
 	}
-	if salt == "" {
-		query = `SELECT salt FROM profs WHERE profID = ?`
-		lg, err = db.Query(query, login)
-		if err != nil {
-			panic(err)
-		}
-		for lg.Next() {
-			if err = lg.Scan(&salt); err != nil {
-				log.Println(err)
-			}
-		}
+	return passwordSalt
+}
+
+func generateRandomString(length int) (string, error) {
+	bytes := make([]byte, length/2)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "", err
 	}
-	return salt
+
+	return hex.EncodeToString(bytes), nil
+}
+
+func hashPassword(password string, salt string) string {
+	key := argon2.IDKey([]byte(password), []byte(salt), 1, 64*1024, 4, 32)
+	return hex.EncodeToString(key)
 }
