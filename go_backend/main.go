@@ -27,15 +27,37 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	/*session := ExecuteLogin()
-	print(session)
-	HomePage(session)*/
+
+	// Create a new router
 	router := mux.NewRouter()
+
+	// Add CORS middleware
+	router.Use(corsMiddleware)
+
 	router.HandleFunc("/login", ExecuteLogin).Methods("GET")
 	router.HandleFunc("/home", HomePage).Methods("GET")
 
 	// Start the HTTP server
 	log.Fatal(http.ListenAndServe(":8080", router))
+}
+
+// Define the CORS middleware
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Set headers to allow cross-origin requests
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		// If it's a preflight request, send a 200 OK status
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		// Call the next handler
+		next.ServeHTTP(w, r)
+	})
 }
 
 func returnSomething(w http.ResponseWriter, r *http.Request) {
