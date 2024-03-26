@@ -17,9 +17,10 @@ import (
 type Response struct {
 	LoginStatus bool   `json:"login_status"`
 	SessionKey  string `json:"session_key"`
+	ExpireTime  string `json:"expire_time"`
 }
 
-func ExecLogin(w http.ResponseWriter, r *http.Request) {
+func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
 	// Get arguments from URL
 	queryParams := r.URL.Query()
 	login := queryParams.Get("login")
@@ -36,13 +37,13 @@ func ExecLogin(w http.ResponseWriter, r *http.Request) {
 	isLoggedIn, userId := tryLogin(login, hashedPassword, salt)
 
 	// If login is correct, create session
-	var sessionKey string
+	var sessionKey, expireTime string
 	if isLoggedIn {
-		sessionKey = createSession(userId)
+		sessionKey, expireTime = createSession(userId)
 	}
 
 	// Send response
-	var response = Response{LoginStatus: isLoggedIn, SessionKey: sessionKey}
+	var response = Response{LoginStatus: isLoggedIn, SessionKey: sessionKey, ExpireTime: expireTime}
 	json.NewEncoder(w).Encode(response)
 
 	fmt.Println("> User [ " + login + "] logged in: [ " + strconv.FormatBool(isLoggedIn) + " ].")
@@ -71,7 +72,7 @@ func tryLogin(login, hashedPassword, salt string) (isLoggedIn bool, userId strin
 	return isLoggedIn, userId
 }
 
-func createSession(userId string) (sessionKey string) {
+func createSession(userId string) (sessionKey, expireTime string) {
 	// Generate session key - cryptographic sha256 hash
 	for {
 		sessionKey, _ = generateRandomString(256)
@@ -89,7 +90,7 @@ func createSession(userId string) (sessionKey string) {
 		panic(err)
 	}
 
-	return sessionKey
+	return sessionKey, formattedExpirationTime
 }
 
 func sessionExists(newSessionKey string) bool {
