@@ -23,18 +23,18 @@ type Response struct {
 func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
 	// Get arguments from URL
 	queryParams := r.URL.Query()
-	login := queryParams.Get("login")
+	username := queryParams.Get("username")
 	password := queryParams.Get("password")
-	fmt.Println("> User [ " + login + "] is trying to log in with password [ " + password + " ].")
+	fmt.Println("> User [ " + username + "] is trying to log in with password [ " + password + " ].")
 
 	// Get salt from database
-	salt := getUserSalt(login)
+	salt := getUserSalt(username)
 
 	// Hash password
 	var hashedPassword = hashPassword(password, salt)
 
 	// Check if login is correct and get session
-	isLoggedIn, userId := tryLogin(login, hashedPassword, salt)
+	isLoggedIn, userId := tryLogin(username, hashedPassword, salt)
 
 	// If login is correct, create session
 	var sessionKey, expireTime string
@@ -46,18 +46,18 @@ func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
 	var response = Response{LoginStatus: isLoggedIn, SessionKey: sessionKey, ExpireTime: expireTime}
 	json.NewEncoder(w).Encode(response)
 
-	fmt.Println("> User [ " + login + "] logged in: [ " + strconv.FormatBool(isLoggedIn) + " ].")
+	fmt.Println("> User [ " + username + "] logged in: [ " + strconv.FormatBool(isLoggedIn) + " ].")
 }
 
-func tryLogin(login, hashedPassword, salt string) (isLoggedIn bool, userId string) {
+func tryLogin(username, hashedPassword, salt string) (isLoggedIn bool, userId string) {
 	// Get login details from database
-	var query = `SELECT user_id, password FROM login_details WHERE login = ?`
-	lg, err := db.Query(query, login)
+	var query = `SELECT user_id, password FROM login_details WHERE username = ?`
+	lg, err := db.Query(query, username)
 	if err != nil {
 		panic(err)
 	}
 
-	// Check if login is correct
+	// Check if password is correct
 	var databasePassword string
 	for lg.Next() {
 		if err = lg.Scan(&userId, &databasePassword); err != nil {
@@ -115,11 +115,11 @@ func sessionExists(newSessionKey string) bool {
 	return false
 }
 
-func getUserSalt(login string) string {
+func getUserSalt(username string) string {
 	var passwordSalt = ""
 
-	var query = `SELECT password_salt FROM login_details WHERE login = ?`
-	lg, err := db.Query(query, login)
+	var query = `SELECT password_salt FROM login_details WHERE username = ?`
+	lg, err := db.Query(query, username)
 	if err != nil {
 		panic(err)
 	}
