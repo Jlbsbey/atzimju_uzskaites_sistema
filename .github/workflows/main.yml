@@ -15,9 +15,22 @@ jobs:
           username: ${{secrets.USERNAME}}
           key: ${{secrets.KEY}}
           script: |
-            # Create temp dir and clone repository
-            rm -rf temp
-            mkdir temp
-            cd temp
-            git clone git@github.com:Jlbsbey/atzimju_uzskaites_sistema
-            echo 'Deployment to digital ocean finished'
+            # Update repository
+            cd ~/repositories/atzimju_uzskaites_sistema
+            git checkout production
+            git pull origin production
+            
+            # Build react
+            cd react_app
+            npm install
+            npm run build
+            
+            # Copy build to web server and restart nginx
+            cp -r build/* /var/www/grade/html/
+            sudo systemctl restart nginx
+            
+            # Build go_backend
+            cd ../go_backend
+            go build
+            
+            
