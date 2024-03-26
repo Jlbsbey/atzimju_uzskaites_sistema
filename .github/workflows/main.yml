@@ -26,11 +26,13 @@ jobs:
             cp -r build/* /var/www/grade/html/
             sudo systemctl restart nginx
             
+            # Stop go_backend
+            sudo service grade-go_backend stop
+            
             # Build go_backend
             cd ../go_backend
             go build
             sudo cp main /home/backend/grade/go_backend/
             
-            # Restart go_backend
-            sudo service grade-go_backend stop
+            # Start go_backend
             sudo service grade-go_backend start
