@@ -27,11 +27,11 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	/*session := ExecLogin()
+	/*session := ExecuteLogin()
 	print(session)
 	HomePage(session)*/
 	router := mux.NewRouter()
-	router.HandleFunc("/login", ExecLogin).Methods("GET")
+	router.HandleFunc("/login", ExecuteLogin).Methods("GET")
 	router.HandleFunc("/home", HomePage).Methods("GET")
 
 	// Start the HTTP server
