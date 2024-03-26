@@ -8,11 +8,18 @@ const Login: React.FC = () => {
 	const [error, setError] = useState('');
 
 	const submit = () => {
-		if (user_login(username, password)) {
-			window.location.href = "/main";
-		} else {
-			setError("Invalid username or password");
-		}
+		user_login(username, password)
+			.then((status: boolean) => {
+				console.log(status);
+				if (!status) {
+					setError('Invalid username or password');
+				} else {
+					window.location.href = '/main';
+				}
+			})
+			.catch((error: unknown) => {
+				setError('Error logging in');
+			});
 	}
 
 	return (
