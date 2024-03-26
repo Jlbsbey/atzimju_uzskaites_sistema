@@ -20,12 +20,9 @@ jobs:
             git checkout production
             git pull origin production
             
-            # Build react
+            # Copy build (should be built in advance)
+            # to web server and restart nginx
             cd react_app
-            npm install
-            npm run build
-            
-            # Copy build to web server and restart nginx
             cp -r build/* /var/www/grade/html/
             sudo systemctl restart nginx
             
