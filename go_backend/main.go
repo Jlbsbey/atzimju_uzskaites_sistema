@@ -38,7 +38,12 @@ func main() {
 	router.HandleFunc("/home", HomePage).Methods("GET")
 
 	// Start the HTTP server
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServeTLS(
+		":8080",
+		"fullchain.crt",
+		"privkey.key",
+		router,
+	))
 }
 
 // Define the CORS middleware
