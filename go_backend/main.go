@@ -37,13 +37,20 @@ func main() {
 	router.HandleFunc("/login", ExecuteLogin).Methods("GET")
 	router.HandleFunc("/home", HomePage).Methods("GET")
 
-	// Start the HTTP server
-	log.Fatal(http.ListenAndServeTLS(
-		":8443",
-		"fullchain.crt",
-		"privkey.key",
-		router,
-	))
+	var development = true
+
+	if development {
+		// Start the HTTP server
+		log.Fatal(http.ListenAndServe(":8080", router))
+	} else {
+		// Start the HTTP server
+		log.Fatal(http.ListenAndServeTLS(
+			":8443",
+			"fullchain.crt",
+			"privkey.key",
+			router,
+		))
+	}
 }
 
 // Define the CORS middleware
