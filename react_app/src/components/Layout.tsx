@@ -21,6 +21,15 @@ const Layout = () => {
 			<div className="content">
 				<Outlet/>
 			</div>
+
+			<div className="footer">
+				<a className="footer-link" href="/about/">
+					About Grade
+				</a>
+				<p className="footer-text">
+					© 2024 Grade
+				</p>
+			</div>
 		</>
 	)
 };
