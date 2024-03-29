@@ -7,7 +7,7 @@ interface Response {
 }
 
 export function user_login(username: string, password: string): Promise<boolean> {
-	let response = try_login("http://104.248.86.80:8080/login", username, password);
+	let response = try_login("http://grade.nevolodia.com:8443/login", username, password);
 
 	return response.then((data: Response) => {
 		if (data.login_status) {
@@ -35,5 +35,4 @@ function try_login(url: string, username: string, password: string): Promise<Res
 			console.error('Error fetching data:', error.message);
 			throw error;
 		});
-
 }
