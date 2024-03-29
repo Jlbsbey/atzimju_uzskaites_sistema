@@ -2,6 +2,8 @@
 
 :root {
 	--padding-y: 25px;
+	--menu-height: 45px;
+	--footer-height: 32px;
 }
 
 @media (min-width: 576px) {
@@ -20,7 +22,7 @@
 
 .menu {
 	width: 100%;
-	height: 45px;
+	height: var(--menu-height);
 
 	padding: 0 var(--padding-y);
 
@@ -37,14 +39,14 @@
 }
 
 .menu-link {
-	margin-left: 20px;
+	margin: 0 10px;
 }
 
 /* Content container */
 
 .content {
 	width: 100%;
-	height: calc(100% - 45px);
+	height: calc(100% - var(--menu-height) - var(--footer-height));
 
 	padding: 40px var(--padding-y) 0 var(--padding-y);
 
@@ -52,5 +54,26 @@
 	background-image: url("../assets/images/background_pattern.png");
 }
 
+/* Footer */
 
+.footer {
+	width: 100%;
+	height: var(--footer-height);
 
+	padding: 0 var(--padding-y);
+
+	background-color: #ffffff;
+	border-top: 1px solid #c7c7c7;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.footer-text {
+	margin: 0 5px 0 5px;
+}
+
+.footer-link {
+	margin: 0 10px;
+}
