@@ -39,7 +39,7 @@ func main() {
 
 	// Start the HTTP server
 	log.Fatal(http.ListenAndServeTLS(
-		":8080",
+		":8443",
 		"fullchain.crt",
 		"privkey.key",
 		router,
