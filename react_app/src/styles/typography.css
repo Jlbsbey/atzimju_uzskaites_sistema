@@ -1,0 +1,22 @@
+/* Logo with animation */
+
+.logo-animation {
+	font-weight: 900;
+	animation: animateFontWeight 1.6s infinite;
+	display: inline-block;
+	width: 120px;
+
+	text-align: center;
+}
+
+@media (max-width: 1200px) {
+	.logo-animation {
+		width: calc(calc(1.375rem + 1.5vw) * 3);
+	}
+}
+
+/* Texts */
+
+.text-main {
+	font-size: 1.2rem;
+}
