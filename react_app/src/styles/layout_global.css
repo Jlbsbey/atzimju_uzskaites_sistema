@@ -1,0 +1,9 @@
+.w-50-desktop {
+	width: 50%;
+}
+
+@media (max-width: 1200px) {
+	.w-50-desktop {
+		width: 100%;
+	}
+}
