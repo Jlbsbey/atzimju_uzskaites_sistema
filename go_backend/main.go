@@ -2,13 +2,11 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 var db *sql.DB
@@ -27,6 +25,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	go ClearSessions()
 
 	// Create a new router
 	router := mux.NewRouter()
@@ -70,16 +69,4 @@ func corsMiddleware(next http.Handler) http.Handler {
 		// Call the next handler
 		next.ServeHTTP(w, r)
 	})
-}
-
-func returnSomething(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-
-	id, err := strconv.Atoi(params["id"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	json.NewEncoder(w).Encode("Hello World !, user " + strconv.Itoa(id))
 }
