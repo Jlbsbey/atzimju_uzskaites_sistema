@@ -51,7 +51,7 @@ func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("> User [ " + username + "] logged in: [ " + strconv.FormatBool(isLoggedIn) + " ].")
 }
 
-func tryLogin(username, hashedPassword, salt string) (isLoggedIn bool, userId string) {
+func tryLogin(username, hashedPassword, salt string) (isLoggedIn bool, userId int) {
 	// Get login details from database
 	var query = `SELECT user_id, password FROM login_details WHERE username = ?`
 	lg, err := db.Query(query, username)
@@ -74,7 +74,7 @@ func tryLogin(username, hashedPassword, salt string) (isLoggedIn bool, userId st
 	return isLoggedIn, userId
 }
 
-func createSession(userId string) (sessionKey, expireTime string) {
+func createSession(userId int) (sessionKey, expireTime string) {
 	// Generate session key - cryptographic sha256 hash
 	for {
 		sessionKey, _ = generateRandomString(256)
@@ -82,7 +82,10 @@ func createSession(userId string) (sessionKey, expireTime string) {
 			break
 		}
 	}
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 	var expirationTime = time.Now().Add(time.Hour * 1)
 	var formattedExpirationTime = expirationTime.Format("2006-01-02 15:04:05")
 
