@@ -21,6 +21,8 @@ type Response struct {
 }
 
 func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
+	//clears all expired sessions before login
+	ClearSessionsOnce()
 	// Get arguments from URL
 	queryParams := r.URL.Query()
 	username := queryParams.Get("username")
@@ -49,7 +51,7 @@ func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("> User [ " + username + "] logged in: [ " + strconv.FormatBool(isLoggedIn) + " ].")
 }
 
-func tryLogin(username, hashedPassword, salt string) (isLoggedIn bool, userId string) {
+func tryLogin(username, hashedPassword, salt string) (isLoggedIn bool, userId int) {
 	// Get login details from database
 	var query = `SELECT user_id, password FROM login_details WHERE username = ?`
 	lg, err := db.Query(query, username)
@@ -72,7 +74,7 @@ func tryLogin(username, hashedPassword, salt string) (isLoggedIn bool, userId st
 	return isLoggedIn, userId
 }
 
-func createSession(userId string) (sessionKey, expireTime string) {
+func createSession(userId int) (sessionKey, expireTime string) {
 	// Generate session key - cryptographic sha256 hash
 	for {
 		sessionKey, _ = generateRandomString(256)
@@ -80,8 +82,11 @@ func createSession(userId string) (sessionKey, expireTime string) {
 			break
 		}
 	}
+<<<<<<< Updated upstream
 
-	var expirationTime = time.Now().Add(time.Hour * 24)
+=======
+>>>>>>> Stashed changes
+	var expirationTime = time.Now().Add(time.Hour * 1)
 	var formattedExpirationTime = expirationTime.Format("2006-01-02 15:04:05")
 
 	query := `INSERT INTO sessions(session_key, user_id, expire_time) VALUES (?, ?, ?)`
@@ -145,4 +150,35 @@ func generateRandomString(length int) (string, error) {
 func hashPassword(password string, salt string) string {
 	key := argon2.IDKey([]byte(password), []byte(salt), 1, 64*1024, 4, 32)
 	return hex.EncodeToString(key)
+}
+
+func ClearSessions() {
+	for {
+		ClearSessionsOnce()
+		time.Sleep(6 * time.Hour)
+	}
+}
+
+func ClearSessionsOnce() {
+	// Check if session exists
+	var query = `SELECT session_key, expire_time FROM sessions`
+	lg, err := db.Query(query)
+	var sessionID string
+	var expireTime time.Time
+	now := time.Now().Add(time.Hour * 1)
+	if err != nil {
+		panic(err)
+	}
+	for lg.Next() {
+		if err = lg.Scan(&sessionID, &expireTime); err != nil {
+			log.Println(err)
+		}
+		if expireTime.Before(now) {
+			query = `DELETE FROM sessions WHERE session_key = ?`
+			lg, err = db.Query(query, sessionID)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
 }
