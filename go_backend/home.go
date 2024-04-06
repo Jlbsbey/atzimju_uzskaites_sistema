@@ -118,10 +118,13 @@ func getUserID(session string) int {
 	var DBexpire time.Time
 	var login int
 	if err != nil {
+		print(1)
 		panic(err)
 	}
 	for lg.Next() {
+		print(2)
 		if err = lg.Scan(&login, &DBexpire); err != nil {
+			print(3)
 			log.Println(err)
 		}
 		if time.Now().After(DBexpire) {

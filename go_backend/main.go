@@ -36,7 +36,7 @@ func main() {
 	router.HandleFunc("/login", ExecuteLogin).Methods("GET")
 	router.HandleFunc("/home", HomePage).Methods("GET")
 
-	var development = false
+	var development = true
 
 	if development {
 		// Start the HTTP server
