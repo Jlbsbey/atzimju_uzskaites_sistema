@@ -82,10 +82,6 @@ func createSession(userId int) (sessionKey, expireTime string) {
 			break
 		}
 	}
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 	var expirationTime = time.Now().Add(time.Hour * 1)
 	var formattedExpirationTime = expirationTime.Format("2006-01-02 15:04:05")
 
