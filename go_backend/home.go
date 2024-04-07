@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -16,11 +17,23 @@ type Mark struct {
 	MarkID     int    `json:"mark_id"`
 	SubjectID  int    `json:"subject_id"`
 }
+type Subject struct {
+	SubjectID   int    `json:"subject_id"`
+	SubjectName string `json:"subject_name"`
+}
+type User struct {
+	UserID   int    `json:"user_id"`
+	Username string `json:"username"`
+}
 
 type Response_Home struct {
-	Role   string `json:"role"`
-	UserID int    `json:"user_id"`
-	Marks  []Mark `json:"marks"`
+	Status   string    `json:"status"`
+	Error    string    `json:"error"`
+	Role     string    `json:"role"`
+	UserID   int       `json:"user_id"`
+	Marks    []Mark    `json:"marks"`
+	Subjects []Subject `json:"subjects"`
+	Users    []User    `json:"users"` //IDs of professors if role = student and vice versa
 }
 
 /*export interface Grade {
@@ -34,28 +47,64 @@ type Response_Home struct {
 
 var role string
 
-func HomePage(w http.ResponseWriter, r *http.Request /*session string*/) {
+func HomePage(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
 	userID := getUserID(session)
 	if userID == -1 {
-		w.Write([]byte("auth:404")) //истекло время сессии или пользователь не был найден по сессии
+		var response = Response_Home{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
+		json.NewEncoder(w).Encode(response)
 		return
 	}
 	subjects := getSubjects(userID)
 	if len(subjects) == 0 {
-		w.Write([]byte("auth:405")) //предметов нет у этого человека, выводи сообщение что бы админ их добавил
+		var response = Response_Home{Status: "error", Error: "No subjects"} //предметов нет у этого человека, выводи сообщение что бы админ их добавил
+		json.NewEncoder(w).Encode(response)
 		return
 	}
 	var Marks []Mark
 	for i := 0; i < len(subjects); i++ {
-		markarr := getMarks(subjects[i], userID)
+		markarr := getMarks(subjects[i].SubjectID, userID)
 		for j := 0; j < len(markarr); j++ {
 			Marks = append(Marks, markarr[j])
 		}
 	}
-	var response = Response_Home{Role: role, UserID: userID, Marks: Marks}
+	users := getUsers()
+	if len(users) == 0 {
+		var response = Response_Home{Status: "error", Error: "No students or professors"}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+	var response = Response_Home{Status: "OK", Error: "", Role: role, UserID: userID, Marks: Marks, Subjects: subjects, Users: users}
 	json.NewEncoder(w).Encode(response)
+}
+
+func getUsers() []User {
+	var users []User
+	var lg *sql.Rows
+	var ID int
+	var err error
+	var name, surname string
+	if role == "student" {
+		query := `SELECT professor_id, name, surname FROM professors `
+		lg, err = db.Query(query)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		query := `SELECT student_id, name, surname FROM students `
+		lg, err = db.Query(query)
+		if err != nil {
+			panic(err)
+		}
+	}
+	for lg.Next() {
+		if err = lg.Scan(&ID, &name, &surname); err != nil {
+			log.Println(err)
+		}
+		users = append(users, User{UserID: ID, Username: name + " " + surname})
+	}
+	return users
 }
 
 func getMarks(subject int, userID int) []Mark {
@@ -79,19 +128,30 @@ func getMarks(subject int, userID int) []Mark {
 
 }
 
-func getSubjects(userID int) []int {
+func getSubjects(userID int) []Subject {
 	query := `SELECT subject_id FROM students_subjects WHERE student_id = ?`
 	lg, err := db.Query(query, userID)
-	var subjects []int
+	var subjects []Subject
 	if err != nil {
 		panic(err)
 	}
 	for lg.Next() {
-		var temp int
-		if err = lg.Scan(&temp); err != nil {
+		var ID int
+		if err = lg.Scan(&ID); err != nil {
 			log.Println(err)
 		}
-		subjects = append(subjects, temp)
+		query = `SELECT name FROM subjects WHERE subject_id = ?`
+		lg, err = db.Query(query, ID)
+		if err != nil {
+			panic(err)
+		}
+		for lg.Next() {
+			var name string
+			if err = lg.Scan(&name); err != nil {
+				log.Println(err)
+			}
+			subjects = append(subjects, Subject{SubjectID: ID, SubjectName: name})
+		}
 		role = "student"
 	}
 	if len(subjects) == 0 {
@@ -101,12 +161,23 @@ func getSubjects(userID int) []int {
 			panic(err)
 		}
 		for lg.Next() {
-			var temp int
-			if err = lg.Scan(&temp); err != nil {
+			var ID int
+			if err = lg.Scan(&ID); err != nil {
 				log.Println(err)
 			}
-			subjects = append(subjects, temp)
-			role = "professor"
+			query = `SELECT name FROM subjects WHERE subject_id = ?`
+			lg, err = db.Query(query, userID)
+			if err != nil {
+				panic(err)
+			}
+			for lg.Next() {
+				var name string
+				if err = lg.Scan(&name); err != nil {
+					log.Println(err)
+				}
+				subjects = append(subjects, Subject{SubjectID: ID, SubjectName: name})
+			}
+			role = "student"
 		}
 	}
 	return subjects
@@ -122,7 +193,6 @@ func getUserID(session string) int {
 		panic(err)
 	}
 	for lg.Next() {
-		print(2)
 		if err = lg.Scan(&login, &DBexpire); err != nil {
 			print(3)
 			log.Println(err)

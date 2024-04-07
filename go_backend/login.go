@@ -159,6 +159,7 @@ func ClearSessionsOnce() {
 	// Check if session exists
 	var query = `SELECT session_key, expire_time FROM sessions`
 	lg, err := db.Query(query)
+
 	var sessionID string
 	var expireTime time.Time
 	now := time.Now().Add(time.Hour * 1)
@@ -171,10 +172,7 @@ func ClearSessionsOnce() {
 		}
 		if expireTime.Before(now) {
 			query = `DELETE FROM sessions WHERE session_key = ?`
-			lg, err = db.Query(query, sessionID)
-			if err != nil {
-				panic(err)
-			}
+			db.Query(query, sessionID)
 		}
 	}
 }
