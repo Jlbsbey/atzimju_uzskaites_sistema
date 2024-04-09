@@ -8,6 +8,13 @@ import (
 	"time"
 )
 
+type Responce struct {
+	LoginStatus string `json:"login_status"`
+	Status      string `json:"status"`
+	Error       string `json:"error"`
+	Result      any    `json:"result"`
+}
+
 type Mark struct {
 	Number     int    `json:"value"`
 	StudentID  int    `json:"student_id"`
