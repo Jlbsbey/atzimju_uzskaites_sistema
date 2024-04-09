@@ -27,8 +27,6 @@ type User struct {
 }
 
 type Response_Home struct {
-	Status   string    `json:"status"`
-	Error    string    `json:"error"`
 	Role     string    `json:"role"`
 	UserID   int       `json:"user_id"`
 	Marks    []Mark    `json:"marks"`
@@ -36,14 +34,11 @@ type Response_Home struct {
 	Users    []User    `json:"users"` //IDs of professors if role = student and vice versa
 }
 
-/*export interface Grade {
-	id: number;
-	subject_id: number;
-	value: number;
-	professor: string;
-	created_unix: number;
-	last_updated_unix: number;
-}*/
+type Response_Body struct {
+	Status   string        `json:"status"`
+	Error    string        `json:"error"`
+	Response Response_Home `json:"content"`
+}
 
 var role string
 
@@ -52,13 +47,13 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 	session := queryParams.Get("auth")
 	userID := getUserID(session)
 	if userID == -1 {
-		var response = Response_Home{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
+		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 	subjects := getSubjects(userID)
 	if len(subjects) == 0 {
-		var response = Response_Home{Status: "error", Error: "No subjects"} //предметов нет у этого человека, выводи сообщение что бы админ их добавил
+		var response = Response_Body{Status: "error", Error: "No subjects"} //предметов нет у этого человека, выводи сообщение что бы админ их добавил
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -71,11 +66,12 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 	}
 	users := getUsers()
 	if len(users) == 0 {
-		var response = Response_Home{Status: "error", Error: "No students or professors"}
+		var response = Response_Body{Status: "error", Error: "No students or professors"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	var response = Response_Home{Status: "OK", Error: "", Role: role, UserID: userID, Marks: Marks, Subjects: subjects, Users: users}
+	var response_home = Response_Home{Role: role, UserID: userID, Marks: Marks, Subjects: subjects, Users: users}
+	var response = Response_Body{Status: "OK", Error: "", Response: response_home}
 	json.NewEncoder(w).Encode(response)
 }
 
