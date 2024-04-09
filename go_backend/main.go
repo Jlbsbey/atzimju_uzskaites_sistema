@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/go-sql-driver/mysql"
@@ -36,7 +37,14 @@ func main() {
 	router.HandleFunc("/login", ExecuteLogin).Methods("GET")
 	router.HandleFunc("/home", HomePage).Methods("GET")
 
-	var development = false
+	var development = true
+
+	query := `SELECT * FROM sessions;`
+	one, err := db.ExecContext(context.Background(), query)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(one)
 
 	if development {
 		// Start the HTTP server
