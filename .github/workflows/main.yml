@@ -2,7 +2,7 @@ name: Deploy to DigitalOcean Droplet
 'on':
   push:
     branches:
-      - production
+      - main
 
 jobs:
   deploy:
@@ -17,8 +17,8 @@ jobs:
           script: |
             # Update repository
             cd ~/repositories/atzimju_uzskaites_sistema
-            git checkout production
-            git pull origin production
+            git checkout main
+            git pull origin main
             
             # Copy build (should be built in advance)
             # to web server and restart nginx
