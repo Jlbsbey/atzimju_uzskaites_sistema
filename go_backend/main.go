@@ -12,7 +12,6 @@ import (
 var db *sql.DB
 
 func main() {
-	fmt.Println("Starting server...")
 	cfg := mysql.NewConfig()
 	(*cfg).User = "remote"
 	(*cfg).Addr = "104.248.86.80:3306"
@@ -43,6 +42,7 @@ func main() {
 		// Start the HTTP server
 		log.Fatal(http.ListenAndServe(":8080", router))
 	} else {
+		fmt.Println("Starting server in working mode...")
 		// Start the HTTP server
 		log.Fatal(http.ListenAndServeTLS(
 			":8443",
