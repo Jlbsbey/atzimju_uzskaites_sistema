@@ -12,6 +12,7 @@ import (
 var db *sql.DB
 
 func main() {
+	fmt.Println("Starting server...")
 	cfg := mysql.NewConfig()
 	(*cfg).User = "remote"
 	(*cfg).Addr = "104.248.86.80:3306"

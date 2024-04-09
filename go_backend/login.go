@@ -21,8 +21,6 @@ type Response struct {
 }
 
 func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Executing login.")
-
 	//clears all expired sessions before login
 	ClearSessionsOnce()
 	// Get arguments from URL
