@@ -37,7 +37,7 @@ func main() {
 	router.HandleFunc("/login", ExecuteLogin).Methods("GET")
 	router.HandleFunc("/home", HomePage).Methods("GET")
 
-	var development = true
+	var development = false
 
 	query := `SELECT * FROM sessions;`
 	one, err := db.ExecContext(context.Background(), query)
