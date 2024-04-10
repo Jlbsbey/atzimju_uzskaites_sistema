@@ -8,13 +8,6 @@ import (
 	"time"
 )
 
-type Responce struct {
-	LoginStatus string `json:"login_status"`
-	Status      string `json:"status"`
-	Error       string `json:"error"`
-	Result      any    `json:"result"`
-}
-
 type Mark struct {
 	Number     int    `json:"value"`
 	StudentID  int    `json:"student_id"`
@@ -41,14 +34,6 @@ type Response_Home struct {
 	Users    []User    `json:"users"` //IDs of professors if role = student and vice versa
 }
 
-type Response_Body struct {
-	Status   string        `json:"status"`
-	Error    string        `json:"error"`
-	Response Response_Home `json:"content"`
-}
-
-var role string
-
 func HomePage(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
@@ -58,7 +43,7 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	subjects := getSubjects(userID)
+	subjects, role := getSubjects(userID)
 	if len(subjects) == 0 {
 		var response = Response_Body{Status: "error", Error: "No subjects"} //предметов нет у этого человека, выводи сообщение что бы админ их добавил
 		json.NewEncoder(w).Encode(response)
@@ -71,7 +56,7 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 			Marks = append(Marks, markarr[j])
 		}
 	}
-	users := getUsers()
+	users := getUsers(role)
 	if len(users) == 0 {
 		var response = Response_Body{Status: "error", Error: "No students or professors"}
 		json.NewEncoder(w).Encode(response)
@@ -82,7 +67,7 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func getUsers() []User {
+func getUsers(role string) []User {
 	var users []User
 	var lg *sql.Rows
 	var ID int
@@ -131,7 +116,8 @@ func getMarks(subject int, userID int) []Mark {
 
 }
 
-func getSubjects(userID int) []Subject {
+func getSubjects(userID int) ([]Subject, string) {
+	var role string
 	query := `SELECT subject_id FROM students_subjects WHERE student_id = ?`
 	lg, err := db.Query(query, userID)
 	var subjects []Subject
@@ -183,7 +169,7 @@ func getSubjects(userID int) []Subject {
 			role = "student"
 		}
 	}
-	return subjects
+	return subjects, role
 }
 
 func getUserID(session string) int {

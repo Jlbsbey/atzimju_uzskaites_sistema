@@ -12,6 +12,12 @@ import (
 
 var db *sql.DB
 
+type Response_Body struct {
+	Status   string `json:"status"`
+	Error    string `json:"error"`
+	Response any    `json:"content"`
+}
+
 func main() {
 	cfg := mysql.NewConfig()
 	(*cfg).User = "remote"
@@ -36,8 +42,9 @@ func main() {
 
 	router.HandleFunc("/login", ExecuteLogin).Methods("GET")
 	router.HandleFunc("/home", HomePage).Methods("GET")
+	router.HandleFunc("/profile", ProfilePage).Methods("GET")
 
-	var development = false
+	var development = true
 
 	query := `SELECT * FROM sessions;`
 	one, err := db.ExecContext(context.Background(), query)
