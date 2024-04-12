@@ -18,15 +18,23 @@ func ChangePassword(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
+	if email != "" && oldPassword == "" {
+		updateEmail(userID, email)
+		var response = Response_Body{Status: "OK", Error: ""} //истекло время сессии или пользователь не был найден по сессии
+		json.NewEncoder(w).Encode(response)
+		return
+	}
 	if checkValidity(userID, oldPassword) {
 		if email != "" {
 			updateEmail(userID, email)
 		}
 		updatePassword(userID, newPassword)
+		//clearUserSessions(userID)
 		var response = Response_Body{Status: "OK", Error: ""} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
 		return
 	}
+	//очистка всех сессий связанных с юзерид
 	var response = Response_Body{Status: "error", Error: "Password is incorrect"} //истекло время сессии или пользователь не был найден по сессии
 	json.NewEncoder(w).Encode(response)
 }
@@ -50,10 +58,23 @@ func checkValidity(userID int, oldPassword string) bool {
 }
 
 func updateEmail(userID int, email string) {
-	query := `UPDATE login_details SET email = ? WHERE user_id = ?`
-	_, err := db.Query(query, email, userID)
+	var role string
+	query := `SELECT role FROM login_details WHERE user_id = ?`
+	lg, err := db.Query(query, userID)
 	if err != nil {
 		panic(err)
+	}
+	for lg.Next() {
+		if err = lg.Scan(&role); err != nil {
+			log.Println(err)
+		}
+		if role == "student" {
+			query = `UPDATE students SET email = ? WHERE student_id = ?`
+			_, err = db.Query(query, email, userID)
+			if err != nil {
+				panic(err)
+			}
+		}
 	}
 }
 
@@ -71,5 +92,13 @@ func updatePassword(userID int, newPassword string) {
 		hashedPassword := hashPassword(newPassword, salt)
 		query = `UPDATE login_details SET password = ? WHERE user_id = ?`
 		_, err = db.Query(query, hashedPassword, userID)
+	}
+}
+
+func clearUserSessions(userID int) {
+	query := `DELETE FROM sessions WHERE user_id = ?`
+	_, err := db.Query(query, userID)
+	if err != nil {
+		panic(err)
 	}
 }
