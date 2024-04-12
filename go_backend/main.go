@@ -45,7 +45,7 @@ func main() {
 	router.HandleFunc("/profile", ProfilePage).Methods("GET")
 	router.HandleFunc("/changePassword", ChangePassword).Methods("GET")
 
-	var development = true
+	var development = false
 
 	query := `SELECT * FROM sessions;`
 	one, err := db.ExecContext(context.Background(), query)
