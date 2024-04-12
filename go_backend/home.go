@@ -131,13 +131,13 @@ func getSubjects(userID int) ([]Subject, string) {
 			log.Println(err)
 		}
 		query = `SELECT name, description FROM subjects WHERE subject_id = ?`
-		lg, err = db.Query(query, ID)
+		innerLg, err := db.Query(query, ID)
 		if err != nil {
 			panic(err)
 		}
-		for lg.Next() {
+		for innerLg.Next() {
 			var name, description string
-			if err = lg.Scan(&name, &description); err != nil {
+			if err = innerLg.Scan(&name, &description); err != nil {
 				log.Println(err)
 			}
 			subjects = append(subjects,
