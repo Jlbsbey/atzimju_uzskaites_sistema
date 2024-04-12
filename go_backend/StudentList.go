@@ -7,9 +7,10 @@ import (
 )
 
 type Student struct {
-	Name    string `json:"name"`
-	Surname string `json:"surname"`
-	Email   string `json:"email"`
+	StudentID string `json:"student_id"`
+	Name      string `json:"name"`
+	Surname   string `json:"surname"`
+	Email     string `json:"email"`
 }
 
 func StudentList(w http.ResponseWriter, r *http.Request) {
@@ -28,18 +29,18 @@ func StudentList(w http.ResponseWriter, r *http.Request) {
 }
 
 func getStudents(part string) []Student {
-	var name, surname, email string
+	var ID, name, surname, email string
 	var students []Student
-	query := `SELECT name, surname, email FROM students WHERE name LIKE ? OR surname LIKE ?`
+	query := `SELECT student_id, name, surname, email FROM students WHERE name LIKE ? OR surname LIKE ?`
 	lg, err := db.Query(query, "%"+part+"%", "%"+part+"%")
 	if err != nil {
 		panic(err)
 	}
 	for lg.Next() {
-		if err = lg.Scan(&name, &surname, &email); err != nil {
+		if err = lg.Scan(&ID, &name, &surname, &email); err != nil {
 			log.Println(err)
 		}
-		students = append(students, Student{Name: name, Surname: surname, Email: email})
+		students = append(students, Student{StudentID: ID, Name: name, Surname: surname, Email: email})
 	}
 	return students
 }
