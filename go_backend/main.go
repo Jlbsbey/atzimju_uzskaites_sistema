@@ -43,6 +43,7 @@ func main() {
 	router.HandleFunc("/login", ExecuteLogin).Methods("GET")
 	router.HandleFunc("/home", HomePage).Methods("GET")
 	router.HandleFunc("/profile", ProfilePage).Methods("GET")
+	router.HandleFunc("/changePassword", ChangePassword).Methods("POST")
 
 	var development = false
 
