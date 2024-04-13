@@ -18,8 +18,9 @@ type Mark struct {
 	SubjectID  int    `json:"subject_id"`
 }
 type Subject struct {
-	SubjectID   int    `json:"subject_id"`
-	SubjectName string `json:"subject_name"`
+	SubjectID          int    `json:"subject_id"`
+	SubjectName        string `json:"subject_name"`
+	SubjectDescription string `json:"subject_description"`
 }
 type User struct {
 	UserID   int    `json:"user_id"`
@@ -138,17 +139,23 @@ func getSubjects(userID int) ([]Subject, string) {
 		if err = lg.Scan(&ID); err != nil {
 			log.Println(err)
 		}
-		query = `SELECT name FROM subjects WHERE subject_id = ?`
-		lg, err = db.Query(query, ID)
+		query = `SELECT name, description FROM subjects WHERE subject_id = ?`
+		innerLg, err := db.Query(query, ID)
 		if err != nil {
 			panic(err)
 		}
-		for lg.Next() {
-			var name string
-			if err = lg.Scan(&name); err != nil {
+		for innerLg.Next() {
+			var name, description string
+			if err = innerLg.Scan(&name, &description); err != nil {
 				log.Println(err)
 			}
-			subjects = append(subjects, Subject{SubjectID: ID, SubjectName: name})
+			subjects = append(subjects,
+				Subject{
+					SubjectID:          ID,
+					SubjectName:        name,
+					SubjectDescription: description,
+				},
+			)
 		}
 		role = "student"
 	}
