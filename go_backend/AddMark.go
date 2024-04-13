@@ -36,12 +36,29 @@ func AddMark(w http.ResponseWriter, r *http.Request) {
 
 func insertMark(profID int, studentID int, subjectID int, mark int) {
 	var formattedTime = time.Now().Format("2006-01-02 15:04:05")
-	markID := generateRandomInteger(1000000000, 9999999999)
+	exist := true
+	var markID int
+	for exist {
+		markID = generateRandomInteger(1000000000, 9999999999)
+		exist = checkExistance(markID)
+	}
 	query := `INSERT INTO marks(mark_id, student_id, professor_id, subject_id, value, create_date, edit_date) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	_, err := db.ExecContext(context.Background(), query, markID, studentID, profID, subjectID, mark, formattedTime, formattedTime)
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func checkExistance(markID int) bool {
+	query := `SELECT mark_id FROM marks WHERE mark_id = ?`
+	lg, err := db.Query(query, markID)
+	if err != nil {
+		panic(err)
+	}
+	for lg.Next() {
+		return true
+	}
+	return false
 }
 
 func updateMark(markID int, mark int) {

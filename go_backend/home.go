@@ -27,11 +27,12 @@ type User struct {
 }
 
 type Response_Home struct {
-	Role     string    `json:"role"`
-	UserID   int       `json:"user_id"`
-	Marks    []Mark    `json:"marks"`
-	Subjects []Subject `json:"subjects"`
-	Users    []User    `json:"users"` //IDs of professors if role = student and vice versa
+	Role       string    `json:"role"`
+	UserID     int       `json:"user_id"`
+	Marks      []Mark    `json:"marks"`
+	Subjects   []Subject `json:"subjects"`
+	Students   []User    `json:"students"`
+	Professors []User    `json:"professors"`
 }
 
 func HomePage(w http.ResponseWriter, r *http.Request) {
@@ -56,43 +57,51 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 			Marks = append(Marks, markarr[j])
 		}
 	}
-	users := getUsers(role)
-	if len(users) == 0 {
-		var response = Response_Body{Status: "error", Error: "No students or professors"}
+	students, professors := getUsers()
+	if len(students) == 0 {
+		var response = Response_Body{Status: "error", Error: "No students"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	var response_home = Response_Home{Role: role, UserID: userID, Marks: Marks, Subjects: subjects, Users: users}
+	if len(professors) == 0 {
+		var response = Response_Body{Status: "error", Error: "No students"}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+	var response_home = Response_Home{Role: role, UserID: userID, Marks: Marks, Subjects: subjects, Students: students, Professors: professors}
 	var response = Response_Body{Status: "OK", Error: "", Response: response_home}
 	json.NewEncoder(w).Encode(response)
 }
 
-func getUsers(role string) []User {
-	var users []User
+func getUsers() ([]User, []User) {
+	var students, professors []User
 	var lg *sql.Rows
 	var ID int
 	var err error
 	var name, surname string
-	if role == "student" {
-		query := `SELECT professor_id, name, surname FROM professors `
-		lg, err = db.Query(query)
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		query := `SELECT student_id, name, surname FROM students `
-		lg, err = db.Query(query)
-		if err != nil {
-			panic(err)
-		}
+	query := `SELECT professor_id, name, surname FROM professors `
+	lg, err = db.Query(query)
+	if err != nil {
+		panic(err)
 	}
 	for lg.Next() {
 		if err = lg.Scan(&ID, &name, &surname); err != nil {
 			log.Println(err)
 		}
-		users = append(users, User{UserID: ID, Username: name + " " + surname})
+		professors = append(professors, User{UserID: ID, Username: name + " " + surname})
 	}
-	return users
+	query = `SELECT student_id, name, surname FROM students `
+	lg, err = db.Query(query)
+	if err != nil {
+		panic(err)
+	}
+	for lg.Next() {
+		if err = lg.Scan(&ID, &name, &surname); err != nil {
+			log.Println(err)
+		}
+		students = append(students, User{UserID: ID, Username: name + " " + surname})
+	}
+	return students, professors
 }
 
 func getMarks(subject int, userID int) []Mark {

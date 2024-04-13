@@ -46,6 +46,7 @@ func main() {
 	router.HandleFunc("/changePassword", ChangePassword).Methods("GET")
 	router.HandleFunc("/studentList", StudentList).Methods("GET")
 	router.HandleFunc("/addMark", AddMark).Methods("GET")
+	router.HandleFunc("/addSubject", AddSubject).Methods("GET")
 
 	var development = false
 
