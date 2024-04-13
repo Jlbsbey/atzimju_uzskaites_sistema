@@ -36,9 +36,7 @@ func ProfilePage(w http.ResponseWriter, r *http.Request) {
 func getInfo(userID int, sameUsers bool) Data {
 	var subjects []Subject
 	var role string
-	if !sameUsers {
-		subjects, role = getSubjects(userID)
-	}
+	subjects, role = getSubjects(userID)
 	var lg *sql.Rows
 	var err error
 	var name, surname, email, username string
@@ -54,7 +52,7 @@ func getInfo(userID int, sameUsers bool) Data {
 		query = `SELECT name, surname, email FROM students WHERE student_id = ?`
 		lg, err = db.Query(query, userID)
 	case "professor":
-		query = `SELECT name, surname, email FROM professors WHERE student_id = ?`
+		query = `SELECT name, surname, email FROM professors WHERE professor_id = ?`
 		lg, err = db.Query(query, userID)
 	}
 	for lg.Next() {

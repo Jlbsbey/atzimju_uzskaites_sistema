@@ -128,19 +128,35 @@ func getMarks(subject int, userID int) []Mark {
 
 func getSubjects(userID int) ([]Subject, string) {
 	var role string
-	query := `SELECT subject_id FROM students_subjects WHERE student_id = ?`
+	query := `SELECT role FROM login_details WHERE user_id = ?`
 	lg, err := db.Query(query, userID)
+	for lg.Next() {
+		if err = lg.Scan(&role); err != nil {
+			log.Println(err)
+		}
+	}
 	var subjects []Subject
-	if err != nil {
-		panic(err)
+	if role == "student" {
+		query = `SELECT subject_id FROM students_subjects WHERE student_id = ?`
+		lg, err = db.Query(query, userID)
+		if err != nil {
+			panic(err)
+		}
+	} else if role == "professor" {
+		query = `SELECT subject_id FROM professors_subjects WHERE professor_id = ?`
+		lg, err = db.Query(query, userID)
+		if err != nil {
+			panic(err)
+		}
 	}
 	for lg.Next() {
 		var ID int
+		var innerLg *sql.Rows
 		if err = lg.Scan(&ID); err != nil {
 			log.Println(err)
 		}
 		query = `SELECT name, description FROM subjects WHERE subject_id = ?`
-		innerLg, err := db.Query(query, ID)
+		innerLg, err = db.Query(query, ID)
 		if err != nil {
 			panic(err)
 		}
@@ -156,33 +172,6 @@ func getSubjects(userID int) ([]Subject, string) {
 					SubjectDescription: description,
 				},
 			)
-		}
-		role = "student"
-	}
-	if len(subjects) == 0 {
-		query = `SELECT subject_id FROM professors_subjects WHERE professor_id = ?`
-		lg, err = db.Query(query, userID)
-		if err != nil {
-			panic(err)
-		}
-		for lg.Next() {
-			var ID int
-			if err = lg.Scan(&ID); err != nil {
-				log.Println(err)
-			}
-			query = `SELECT name FROM subjects WHERE subject_id = ?`
-			lg, err = db.Query(query, userID)
-			if err != nil {
-				panic(err)
-			}
-			for lg.Next() {
-				var name string
-				if err = lg.Scan(&name); err != nil {
-					log.Println(err)
-				}
-				subjects = append(subjects, Subject{SubjectID: ID, SubjectName: name})
-			}
-			role = "student"
 		}
 	}
 	return subjects, role
