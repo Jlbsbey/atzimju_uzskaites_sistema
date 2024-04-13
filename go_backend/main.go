@@ -43,10 +43,14 @@ func main() {
 	router.HandleFunc("/login", ExecuteLogin).Methods("GET")
 	router.HandleFunc("/home", HomePage).Methods("GET")
 	router.HandleFunc("/profile", ProfilePage).Methods("GET")
-	router.HandleFunc("/changePassword", ChangePassword).Methods("GET")
+	router.HandleFunc("/changeData", ChangeData).Methods("GET")
 	router.HandleFunc("/studentList", StudentList).Methods("GET")
 	router.HandleFunc("/addMark", AddMark).Methods("GET")
 	router.HandleFunc("/addSubject", AddSubject).Methods("GET")
+	router.HandleFunc("/changeUserData", ChangeUserData).Methods("GET")
+	router.HandleFunc("/changeUserSubjects", ChangeUserSubjects).Methods("GET")
+	router.HandleFunc("/searchSubjects", SearchSubjects).Methods("GET")
+	router.HandleFunc("/addUser", AddUser).Methods("GET")
 
 	var development = false
 
