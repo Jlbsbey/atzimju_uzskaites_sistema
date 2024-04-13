@@ -9,7 +9,6 @@ import (
 	"golang.org/x/crypto/argon2"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -28,7 +27,6 @@ func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	username := queryParams.Get("username")
 	password := queryParams.Get("password")
-	fmt.Println("> User [ " + username + "] is trying to log in with password [ " + password + " ].")
 
 	// Get salt from database
 	salt := getUserSalt(username)
@@ -49,7 +47,6 @@ func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
 	var response = Response{LoginStatus: isLoggedIn, SessionKey: sessionKey, ExpireTime: expireTime}
 	json.NewEncoder(w).Encode(response)
 
-	fmt.Println("> User [ " + username + "] logged in: [ " + strconv.FormatBool(isLoggedIn) + " ].")
 }
 
 func tryLogin(username, hashedPassword, salt string) (isLoggedIn bool, userId int) {
