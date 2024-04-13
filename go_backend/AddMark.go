@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"math"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -39,7 +40,7 @@ func insertMark(profID int, studentID int, subjectID int, mark int) {
 	exist := true
 	var markID int
 	for exist {
-		markID = generateRandomInteger(1000000000, 9999999999)
+		markID = generateRandomInteger(1, math.MaxUint32)
 		exist = checkExistance(markID)
 	}
 	query := `INSERT INTO marks(mark_id, student_id, professor_id, subject_id, value, create_date, edit_date) VALUES (?, ?, ?, ?, ?, ?, ?)`

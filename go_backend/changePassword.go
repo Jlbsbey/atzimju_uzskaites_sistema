@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -25,10 +26,10 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 			updateEmail(userID, email)
 		}
 		if newName != "" && checkAdmin(userID) {
-			UpdateName(userID, newName)
+			updateName(userID, newName)
 		}
 		if newSurname != "" && checkAdmin(userID) {
-			UpdateSurname(userID, newName)
+			updateSurname(userID, newSurname)
 		}
 		var response = Response_Body{Status: "OK", Error: ""} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
@@ -39,10 +40,10 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 			updateEmail(userID, email)
 		}
 		if newName != "" && checkAdmin(userID) {
-			UpdateName(userID, newName)
+			updateName(userID, newName)
 		}
 		if newSurname != "" && checkAdmin(userID) {
-			UpdateSurname(userID, newName)
+			updateSurname(userID, newName)
 		}
 		updatePassword(userID, newPassword)
 		//clearUserSessions(userID)
@@ -55,7 +56,7 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func UpdateSurname(userID int, surname string) {
+func updateSurname(userID int, surname string) {
 	var role string
 	query := `SELECT role FROM login_details WHERE user_id = ?`
 	lg, err := db.Query(query, userID)
@@ -79,8 +80,9 @@ func UpdateSurname(userID int, surname string) {
 				panic(err)
 			}
 		} else if role == "admin" {
-			query = `UPDATE admins SET surname = ? WHERE admin_id = ?`
-			_, err = db.Query(query, surname, userID)
+			fmt.Println(1)
+			query = `UPDATE configuration SET value = ? WHERE name = 'AdminSurname'`
+			_, err = db.Query(query, surname)
 			if err != nil {
 				panic(err)
 			}
@@ -88,7 +90,7 @@ func UpdateSurname(userID int, surname string) {
 	}
 }
 
-func UpdateName(userID int, name string) {
+func updateName(userID int, name string) {
 	var role string
 	query := `SELECT role FROM login_details WHERE user_id = ?`
 	lg, err := db.Query(query, userID)
@@ -112,8 +114,8 @@ func UpdateName(userID int, name string) {
 				panic(err)
 			}
 		} else if role == "admin" {
-			query = `UPDATE admins SET name = ? WHERE admin_id = ?`
-			_, err = db.Query(query, name, userID)
+			query = `UPDATE configuration SET value = ? WHERE name = 'AdminName'`
+			_, err = db.Query(query, name)
 			if err != nil {
 				panic(err)
 			}
@@ -163,8 +165,8 @@ func updateEmail(userID int, email string) {
 				panic(err)
 			}
 		} else if role == "admin" {
-			query = `UPDATE admins SET email = ? WHERE admin_id = ?`
-			_, err = db.Query(query, email, userID)
+			query = `UPDATE configuration SET value = ? WHERE name = 'AdminEmail'`
+			_, err = db.Query(query, email)
 			if err != nil {
 				panic(err)
 			}

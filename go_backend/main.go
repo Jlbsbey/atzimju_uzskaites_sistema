@@ -52,7 +52,7 @@ func main() {
 	router.HandleFunc("/searchSubjects", SearchSubjects).Methods("GET")
 	router.HandleFunc("/addUser", AddUser).Methods("GET")
 
-	var development = false
+	var development = true
 
 	query := `SELECT * FROM sessions;`
 	one, err := db.ExecContext(context.Background(), query)
