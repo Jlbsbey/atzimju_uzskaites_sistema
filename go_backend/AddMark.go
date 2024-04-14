@@ -14,7 +14,7 @@ import (
 func AddMark(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
-	studentID, _ := strconv.Atoi(queryParams.Get("student_id"))
+	username := queryParams.Get("username")
 	subjectID, _ := strconv.Atoi(queryParams.Get("subject"))
 	mark, _ := strconv.Atoi(queryParams.Get("value"))
 	markID, _ := strconv.Atoi(queryParams.Get("mark_id"))
@@ -24,8 +24,14 @@ func AddMark(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID := getUserID(session)
+	studentID := getStudentID(username)
 	if userID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+	if studentID == -1 {
+		var response = Response_Body{Status: "error", Error: "Student does not exist"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -38,6 +44,22 @@ func AddMark(w http.ResponseWriter, r *http.Request) {
 	updateMark(markID, mark)
 	response := Response_Body{Status: "OK"}
 	json.NewEncoder(w).Encode(response)
+}
+
+func getStudentID(username string) int {
+	var studentID int
+	query := `SELECT user_id FROM login_details WHERE username = ?`
+	lg, err := db.Query(query, username)
+	if err != nil {
+		panic(err)
+	}
+	for lg.Next() {
+		if err = lg.Scan(&studentID); err != nil {
+			log.Println(err)
+		}
+		return studentID
+	}
+	return -1
 }
 
 func insertMark(profID int, studentID int, subjectID int, mark int) {
