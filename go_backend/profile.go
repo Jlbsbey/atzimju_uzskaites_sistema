@@ -28,12 +28,12 @@ func ProfilePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sameUsers := userID == originUserID
-	userData := getInfo(userID, sameUsers)
+	userData := getInfo(userID, sameUsers, originUserID)
 	response := Response_Body{Status: "OK", Response: userData}
 	json.NewEncoder(w).Encode(response)
 }
 
-func getInfo(userID int, sameUsers bool) Data {
+func getInfo(userID int, sameUsers bool, adminID int) Data {
 	var subjects []Subject
 	var role string
 	subjects, role = getSubjects(userID)
@@ -60,9 +60,6 @@ func getInfo(userID int, sameUsers bool) Data {
 			log.Println(err)
 		}
 	}
-	if sameUsers {
-		return Data{Username: username, Name: name, Surname: surname, Role: role, Email: email}
-	}
-	return Data{Name: name, Surname: surname, Role: role, Email: email, Subjects: subjects}
+	return Data{Username: username, Name: name, Surname: surname, Role: role, Email: email, Subjects: subjects}
 
 }

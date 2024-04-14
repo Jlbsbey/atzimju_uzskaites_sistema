@@ -18,6 +18,11 @@ func AddMark(w http.ResponseWriter, r *http.Request) {
 	subjectID, _ := strconv.Atoi(queryParams.Get("subject"))
 	mark, _ := strconv.Atoi(queryParams.Get("value"))
 	markID, _ := strconv.Atoi(queryParams.Get("mark_id"))
+	if mark > 10 || mark <= 0 {
+		var response = Response_Body{Status: "error", Error: "Wrong mark. Marks are only from 1 to 10"} //истекло время сессии или пользователь не был найден по сессии
+		json.NewEncoder(w).Encode(response)
+		return
+	}
 	userID := getUserID(session)
 	if userID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии

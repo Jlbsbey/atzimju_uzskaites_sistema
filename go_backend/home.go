@@ -24,7 +24,7 @@ type Subject struct {
 }
 type User struct {
 	UserID   int    `json:"user_id"`
-	Username string `json:"username"`
+	Username string `json:"name"`
 }
 
 type Response_Home struct {
@@ -65,7 +65,7 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(professors) == 0 {
-		var response = Response_Body{Status: "error", Error: "No students"}
+		var response = Response_Body{Status: "error", Error: "No professors"}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -147,6 +147,26 @@ func getSubjects(userID int) ([]Subject, string) {
 		lg, err = db.Query(query, userID)
 		if err != nil {
 			panic(err)
+		}
+	} else if role == "admin" {
+		var subjID int
+		var name, description string
+		query = `SELECT * FROM subjects`
+		lg, err = db.Query(query)
+		if err != nil {
+			panic(err)
+		}
+		for lg.Next() {
+			if err = lg.Scan(&subjID, &name, &description); err != nil {
+				log.Println(err)
+			}
+			subjects = append(subjects,
+				Subject{
+					SubjectID:          subjID,
+					SubjectName:        name,
+					SubjectDescription: description,
+				},
+			)
 		}
 	}
 	for lg.Next() {

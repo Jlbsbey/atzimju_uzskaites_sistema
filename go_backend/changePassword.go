@@ -46,7 +46,7 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 			updateSurname(userID, newName)
 		}
 		updatePassword(userID, newPassword)
-		//clearUserSessions(userID)
+		clearUserSessions(userID)
 		var response = Response_Body{Status: "OK", Error: ""} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
 		return
