@@ -16,14 +16,14 @@ type Student struct {
 func StudentList(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
-	name := queryParams.Get("name")
+	username := queryParams.Get("username")
 	userID := getUserID(session)
 	if userID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	students := getStudents(name)
+	students := getStudents(username)
 	response := Response_Body{Status: "OK", Response: students}
 	json.NewEncoder(w).Encode(response)
 }
