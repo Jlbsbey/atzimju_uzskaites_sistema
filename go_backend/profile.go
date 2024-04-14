@@ -9,6 +9,7 @@ import (
 )
 
 type Data struct {
+	IfMyself   bool      `json:"if_myself"`
 	Username   string    `json:"username"`
 	Name       string    `json:"name"`
 	Surname    string    `json:"surname"`
@@ -64,6 +65,15 @@ func getInfo(userID int, sameUsers bool, adminID int) Data {
 			log.Println(err)
 		}
 	}
-	return Data{Username: username, Name: name, Surname: surname, Role: role, Email: email, Subjects: subjects, AvatarLink: avatarLink}
+	return Data{
+		IfMyself:   sameUsers,
+		Username:   username,
+		Name:       name,
+		Surname:    surname,
+		Role:       role,
+		Email:      email,
+		Subjects:   subjects,
+		AvatarLink: avatarLink,
+	}
 
 }

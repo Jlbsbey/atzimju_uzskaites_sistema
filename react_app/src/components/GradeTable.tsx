@@ -25,7 +25,7 @@ const GradeTable: React.FC<GradeTableProperties> = ({
 					</a>
 				</td>
 				<td>{mark.create_date}</td>
-				<td>{mark.edit_date}</td>
+				<td>{mark.edit_date !== mark.create_date ? mark.edit_date : "-"}</td>
 				{!studentMode && (
 					<td>
 						<button className="btn btn-primary"

@@ -15,7 +15,7 @@ const Layout = () => {
 					<a className="menu-link" href="/main/">
 						Grades
 					</a>
-					<a className="menu-link" href={"/user/?auth="+authKey}>
+					<a className="menu-link" href="/user/">
 						My Profile
 					</a>
 				</div>
