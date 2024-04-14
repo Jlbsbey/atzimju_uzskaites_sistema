@@ -31,7 +31,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	go ClearSessions()
+	//go ClearSessions()
 
 	// Create a new router
 	router := mux.NewRouter()

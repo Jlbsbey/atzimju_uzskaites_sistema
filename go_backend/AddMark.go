@@ -41,7 +41,7 @@ func AddMark(w http.ResponseWriter, r *http.Request) {
 }
 
 func insertMark(profID int, studentID int, subjectID int, mark int) {
-	var formattedTime = time.Now().Format("2006-01-02 15:04:05")
+	formattedTime := time.Now().In(location).Format("2006-01-02 15:04:05")
 	exist := true
 	var markID int
 	for exist {
@@ -68,7 +68,7 @@ func checkExistance(markID int) bool {
 }
 
 func updateMark(markID int, mark int) {
-	now := time.Now().Format("2006-01-02 15:04:05")
+	now := time.Now().In(location).Format("2006-01-02 15:04:05")
 	query := `UPDATE marks SET value = ?, edit_date = ? WHERE mark_id = ?`
 	_, err := db.Query(query, mark, now, markID)
 	if err != nil {

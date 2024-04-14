@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"golang.org/x/crypto/argon2"
 	"log"
 	"net/http"
@@ -19,8 +18,9 @@ type Response struct {
 	ExpireTime  string `json:"expire_time"`
 }
 
+var location, _ = time.LoadLocation("")
+
 func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Executing login...")
 	//clears all expired sessions before login
 	ClearSessionsOnce()
 	// Get arguments from URL
@@ -80,8 +80,7 @@ func createSession(userId int) (sessionKey, expireTime string) {
 			break
 		}
 	}
-	var expirationTime = time.Now().Add(time.Hour * 1)
-	var formattedExpirationTime = expirationTime.Format("2006-01-02 15:04:05")
+	formattedExpirationTime := time.Now().Add(time.Hour * 1).In(location).Format("2006-01-02 15:04:05")
 
 	query := `INSERT INTO sessions(session_key, user_id, expire_time) VALUES (?, ?, ?)`
 	_, err := db.ExecContext(context.Background(), query, sessionKey, userId, formattedExpirationTime)
@@ -160,7 +159,7 @@ func ClearSessionsOnce() {
 
 	var sessionID string
 	var expireTime time.Time
-	now := time.Now().Add(time.Hour * 1)
+	now := time.Now().Add(time.Hour * 1).In(location)
 	if err != nil {
 		panic(err)
 	}

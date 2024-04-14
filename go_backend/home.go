@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -121,6 +122,7 @@ func getMarks(subject int, userID int) []Mark {
 		createTimeformat := create.Format("2006-01-02 15:04:05")
 		editTimeFormat := edit.Format("2006-01-02 15:04:05")
 		marks = append(marks, Mark{MarkID: markID, StudentID: studID, ProfID: prof, Number: number, CreateDate: createTimeformat, EditDate: editTimeFormat, SubjectID: subject})
+		fmt.Println(len(marks))
 	}
 	return marks
 
@@ -198,6 +200,7 @@ func getSubjects(userID int) ([]Subject, string) {
 }
 
 func getUserID(session string) int {
+	ClearSessionsOnce()
 	query := `SELECT user_id, expire_time FROM sessions WHERE session_key = ?`
 	lg, err := db.Query(query, session)
 	var DBexpire time.Time

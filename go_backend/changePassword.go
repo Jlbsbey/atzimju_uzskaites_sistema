@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func ChangeData(w http.ResponseWriter, r *http.Request) {
@@ -23,13 +24,13 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 	}
 	if oldPassword == "" {
 		if email != "" {
-			updateEmail(userID, email)
+			updateData(userID, email, "email")
 		}
 		if newName != "" && checkAdmin(userID) {
-			updateName(userID, newName)
+			updateData(userID, newName, "name")
 		}
 		if newSurname != "" && checkAdmin(userID) {
-			updateSurname(userID, newSurname)
+			updateData(userID, newSurname, "surname")
 		}
 		var response = Response_Body{Status: "OK", Error: ""} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
@@ -37,13 +38,13 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 	}
 	if checkValidity(userID, oldPassword) {
 		if email != "" {
-			updateEmail(userID, email)
+			updateData(userID, email, "email")
 		}
 		if newName != "" && checkAdmin(userID) {
-			updateName(userID, newName)
+			updateData(userID, newName, "name")
 		}
 		if newSurname != "" && checkAdmin(userID) {
-			updateSurname(userID, newName)
+			updateData(userID, newSurname, "surname")
 		}
 		updatePassword(userID, newPassword)
 		clearUserSessions(userID)
@@ -54,73 +55,6 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 	//очистка всех сессий связанных с юзерид
 	var response = Response_Body{Status: "error", Error: "Password is incorrect"} //истекло время сессии или пользователь не был найден по сессии
 	json.NewEncoder(w).Encode(response)
-}
-
-func updateSurname(userID int, surname string) {
-	var role string
-	query := `SELECT role FROM login_details WHERE user_id = ?`
-	lg, err := db.Query(query, userID)
-	if err != nil {
-		panic(err)
-	}
-	for lg.Next() {
-		if err = lg.Scan(&role); err != nil {
-			log.Println(err)
-		}
-		if role == "student" {
-			query = `UPDATE students SET surname = ? WHERE student_id = ?`
-			_, err = db.Query(query, surname, userID)
-			if err != nil {
-				panic(err)
-			}
-		} else if role == "professors" {
-			query = `UPDATE professors SET surname = ? WHERE professor_id = ?`
-			_, err = db.Query(query, surname, userID)
-			if err != nil {
-				panic(err)
-			}
-		} else if role == "admin" {
-			fmt.Println(1)
-			query = `UPDATE configuration SET value = ? WHERE name = 'AdminSurname'`
-			_, err = db.Query(query, surname)
-			if err != nil {
-				panic(err)
-			}
-		}
-	}
-}
-
-func updateName(userID int, name string) {
-	var role string
-	query := `SELECT role FROM login_details WHERE user_id = ?`
-	lg, err := db.Query(query, userID)
-	if err != nil {
-		panic(err)
-	}
-	for lg.Next() {
-		if err = lg.Scan(&role); err != nil {
-			log.Println(err)
-		}
-		if role == "student" {
-			query = `UPDATE students SET name = ? WHERE student_id = ?`
-			_, err = db.Query(query, name, userID)
-			if err != nil {
-				panic(err)
-			}
-		} else if role == "professors" {
-			query = `UPDATE professors SET name = ? WHERE professor_id = ?`
-			_, err = db.Query(query, name, userID)
-			if err != nil {
-				panic(err)
-			}
-		} else if role == "admin" {
-			query = `UPDATE configuration SET value = ? WHERE name = 'AdminName'`
-			_, err = db.Query(query, name)
-			if err != nil {
-				panic(err)
-			}
-		}
-	}
 }
 
 func checkValidity(userID int, oldPassword string) bool {
@@ -141,7 +75,7 @@ func checkValidity(userID int, oldPassword string) bool {
 	return false
 }
 
-func updateEmail(userID int, email string) {
+func updateData(userID int, email string, dataType string) {
 	var role string
 	query := `SELECT role FROM login_details WHERE user_id = ?`
 	lg, err := db.Query(query, userID)
@@ -153,19 +87,20 @@ func updateEmail(userID int, email string) {
 			log.Println(err)
 		}
 		if role == "student" {
-			query = `UPDATE students SET email = ? WHERE student_id = ?`
+			query = fmt.Sprintf("UPDATE students SET %s = ? WHERE student_id = ?", dataType)
 			_, err = db.Query(query, email, userID)
 			if err != nil {
 				panic(err)
 			}
 		} else if role == "professors" {
-			query = `UPDATE professors SET email = ? WHERE professor_id = ?`
+			query = fmt.Sprintf("UPDATE professors SET %s = ? WHERE professor_id = ?", dataType)
 			_, err = db.Query(query, email, userID)
 			if err != nil {
 				panic(err)
 			}
 		} else if role == "admin" {
 			query = `UPDATE configuration SET value = ? WHERE name = 'AdminEmail'`
+			query = fmt.Sprintf("UPDATE configuration SET value = ? WHERE name = %s", "Admin"+strings.ToUpper(dataType[0:1])+dataType[1:])
 			_, err = db.Query(query, email)
 			if err != nil {
 				panic(err)

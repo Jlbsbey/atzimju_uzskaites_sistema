@@ -41,20 +41,20 @@ func ChangeUserData(w http.ResponseWriter, r *http.Request) {
 	name := queryParams.Get("name")
 	surname := queryParams.Get("surname")
 	originUserID := getUserID(session)
-	if userID == -1 {
+	if originUserID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 	if checkAdmin(originUserID) {
 		if email != "" {
-			updateEmail(userID, email)
+			updateData(userID, email, "email")
 		}
 		if name != "" {
-			updateName(userID, name)
+			updateData(userID, name, "name")
 		}
 		if surname != "" {
-			updateSurname(userID, surname)
+			updateData(userID, surname, "surname")
 		}
 		var response = Response_Body{Status: "OK"}
 		json.NewEncoder(w).Encode(response)
