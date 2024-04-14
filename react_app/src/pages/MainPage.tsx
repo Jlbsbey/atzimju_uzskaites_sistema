@@ -6,6 +6,7 @@ import GradeTable from "../components/GradeTable";
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import {getHomeData} from "../scripts/home";
+import MarkEditor from "../components/MarkEditor";
 
 const MainPage: React.FC = () => {
 	const [subjects, setSubjects] = useState<Subject[]>(
@@ -78,53 +79,87 @@ const MainPage: React.FC = () => {
 	const [activeSubject, setActiveSubject] = useState(subjects[0]);
 	const [activeMarks, setActiveMarks] = useState<Mark[]>([]);
 
+	const [overlayAddMarkActive, setOverlayMarkActive] = useState(false);
+	const [overlayEditMarkActive, setOverlayEditMarkActive] = useState(-1);
+
 	return (
-		<div className="main-page">
+		<>
+			<div className="main-page">
 
-			<div className="left-menu">
-				<SimpleBar
-					style={{ maxHeight: "100%", height: "100%", width: "100%"}}
-				>
-					<SubjectsMenu
-						onSubjectClick={(subject) => changeActiveSubject(subject)}
-						subjects={subjects}
-					/>
-				</SimpleBar>
+				<div className="left-menu">
+					<SimpleBar
+						style={{ maxHeight: "100%", height: "100%", width: "100%"}}
+					>
+						<SubjectsMenu
+							onSubjectClick={(subject) => changeActiveSubject(subject)}
+							subjects={subjects}
+						/>
+					</SimpleBar>
+				</div>
+
+				<div className="right-content">
+
+					<h1>{activeSubject.subject_name}</h1>
+
+				{generalData.loaded && (
+					<>
+						<p style={{width:"50%"}}>
+							{   activeSubject.subject_name + " — " +
+								activeSubject.subject_description
+							}
+						</p>
+
+						{overlayAddMarkActive && (
+							<MarkEditor
+								mode="add"
+							/>
+						)}
+						{overlayEditMarkActive !== -1 && (
+							<MarkEditor
+								mode="edit"
+								student={marks.find((mark) => mark.mark_id === overlayEditMarkActive)?.student_name}
+							/>
+						)}
+
+						{generalData.role === "professor" && (
+							<button className="btn btn-primary"
+							        style={{
+										padding: "4px 16px",
+								        fontSize: "16px",
+								        marginBottom: "16px"
+									}}
+							        onClick={() => {
+										if (overlayEditMarkActive === -1) {
+											if (overlayAddMarkActive) {
+												// submit add
+												setOverlayMarkActive(false);
+											} else {
+												setOverlayMarkActive(true);
+												setOverlayEditMarkActive(-1);
+											}
+										} else {
+											// submit edit
+											setOverlayEditMarkActive(-1);
+										}
+									}}
+							>
+								{overlayEditMarkActive === -1 ? "Add mark" : "Edit mark"}
+							</button>
+						)}
+
+						<GradeTable marks={activeMarks}
+						            mode={generalData.role}
+						            overlayEditMarkActive={overlayEditMarkActive}
+						            setOverlayAddMarkActive={setOverlayMarkActive}
+						            setOverlayEditMarkActive={setOverlayEditMarkActive}
+						/>
+					</>
+				)}
+
+				</div>
 			</div>
 
-			<div className="right-content">
-
-				<h1>{activeSubject.subject_name}</h1>
-
-			{generalData.loaded && (
-				<>
-					<p style={{width:"50%"}}>
-						{   activeSubject.subject_name + " — " +
-							activeSubject.subject_description
-						}
-					</p>
-
-					{generalData.role === "professor" && (
-						<button className="btn btn-primary"
-						        style={{
-									padding: "4px 16px",
-							        fontSize: "16px",
-							        marginBottom: "16px"
-								}}
-						>
-							Add mark
-						</button>
-					)}
-
-					<GradeTable marks={activeMarks}
-					            mode={generalData.role}
-					/>
-				</>
-			)}
-
-			</div>
-
-		</div>
+		</>
 	);
 }
 

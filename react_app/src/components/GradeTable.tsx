@@ -5,11 +5,17 @@ import {Mark} from "../scripts/data";
 interface GradeTableProperties {
 	marks: Mark[];
 	mode: string;
+	overlayEditMarkActive: number;
+	setOverlayAddMarkActive: (active: boolean) => void;
+	setOverlayEditMarkActive: (active: number) => void;
 }
 
 const GradeTable: React.FC<GradeTableProperties> = ({
 	marks,
-	mode
+	mode,
+	overlayEditMarkActive,
+	setOverlayAddMarkActive,
+	setOverlayEditMarkActive
 }) => {
 	let studentMode = mode == "student";
 
@@ -33,6 +39,10 @@ const GradeTable: React.FC<GradeTableProperties> = ({
 							        padding: "0 12px",
 							        fontSize: "12px",
 							        fontWeight: "bold"
+						        }}
+						        onClick={() => {
+							        setOverlayAddMarkActive(false);
+							        setOverlayEditMarkActive(mark.mark_id);
 						        }}
 						>
 							Edit
