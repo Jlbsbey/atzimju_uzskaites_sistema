@@ -4,7 +4,9 @@ import {Response} from "./data";
 
 export function getProfileData(id: number): Promise<Response> {
 	let authKey = getAuthCookie();
-	let response = sendRequest("profile?auth=" + authKey + "&user=" + id);
+	let request = "profile?auth=" + authKey;
+	request += id === -1 ? "" : "&user=" + id;
+	let response = sendRequest(request);
 
 	return response.then((data: Response) => {
 		if (data.content.username == "") {

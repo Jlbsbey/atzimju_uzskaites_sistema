@@ -29,10 +29,9 @@ const UserPage: React.FC = () => {
 	// read from html params
 	const urlParams = new URLSearchParams(window.location.search);
 	const userIdString = urlParams.get('id');
-	if (!userIdString) {
-		window.location.href = "/404";
-	}
-	const userId = parseInt(userIdString ? userIdString : "-1");
+	let userId = parseInt(userIdString ? userIdString : "-1");
+	if (!userIdString)
+		userId = -1;
 
 	useEffect(() => {
 		getProfileData(userId).then((data) => {
