@@ -10,7 +10,8 @@ export function getAuthCookie() {
 		if (cookie.includes("session_key")) {
 			session_key = cookie.split("=")[1];
 		} else {
-			window.location.href = "/session_ended";
+			if (window.location.pathname !== "/session_ended" && window.location.pathname !== "/")
+				window.location.href = "/session_ended";
 		}
 	});
 
