@@ -9,12 +9,13 @@ import (
 )
 
 type Data struct {
-	Username string    `json:"username"`
-	Name     string    `json:"name"`
-	Surname  string    `json:"surname"`
-	Role     string    `json:"role"`
-	Email    string    `json:"email"`
-	Subjects []Subject `json:"subjects"`
+	Username   string    `json:"username"`
+	Name       string    `json:"name"`
+	Surname    string    `json:"surname"`
+	Role       string    `json:"role"`
+	Email      string    `json:"email"`
+	AvatarLink string    `json:"avatar_link"`
+	Subjects   []Subject `json:"subjects"`
 }
 
 func ProfilePage(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +40,7 @@ func getInfo(userID int, sameUsers bool, adminID int) Data {
 	subjects, role = getSubjects(userID)
 	var lg *sql.Rows
 	var err error
-	var name, surname, email, username string
+	var name, surname, email, username, avatarLink string
 	query := `SELECT username FROM login_details WHERE user_id = ?`
 	lg, err = db.Query(query, userID)
 	for lg.Next() {
@@ -49,17 +50,17 @@ func getInfo(userID int, sameUsers bool, adminID int) Data {
 	}
 	switch role {
 	case "student":
-		query = `SELECT name, surname, email FROM students WHERE student_id = ?`
+		query = `SELECT name, surname, email, avatar_link FROM students WHERE student_id = ?`
 		lg, err = db.Query(query, userID)
 	case "professor":
-		query = `SELECT name, surname, email FROM professors WHERE professor_id = ?`
+		query = `SELECT name, surname, email, avatar_link FROM professors WHERE professor_id = ?`
 		lg, err = db.Query(query, userID)
 	}
 	for lg.Next() {
-		if err = lg.Scan(&name, &surname, &email); err != nil {
+		if err = lg.Scan(&name, &surname, &email, &avatarLink); err != nil {
 			log.Println(err)
 		}
 	}
-	return Data{Username: username, Name: name, Surname: surname, Role: role, Email: email, Subjects: subjects}
+	return Data{Username: username, Name: name, Surname: surname, Role: role, Email: email, Subjects: subjects, AvatarLink: avatarLink}
 
 }
