@@ -43,7 +43,7 @@ func main() {
 	router.HandleFunc("/home", HomePage).Methods("GET")
 	router.HandleFunc("/profile", ProfilePage).Methods("GET")
 	router.HandleFunc("/changeData", ChangeData).Methods("GET")
-	router.HandleFunc("/studentList", StudentList).Methods("GET")
+	//router.HandleFunc("/studentList", StudentList).Methods("GET")
 	router.HandleFunc("/addMark", AddMark).Methods("GET")
 	router.HandleFunc("/addSubject", AddSubject).Methods("GET")
 	router.HandleFunc("/changeUserData", ChangeUserData).Methods("GET")
