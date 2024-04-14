@@ -17,6 +17,7 @@ const UserPage: React.FC = () => {
 	);
 	const [generalData, setGeneralData] = useState({
 		loaded: false,
+		if_myself: false,
 		user_id: 0,
 		role: "",
 		name: "",
@@ -40,6 +41,7 @@ const UserPage: React.FC = () => {
 			setGeneralData(
 				{
 					loaded: true,
+					if_myself: data.content.if_myself,
 					user_id: data.content.user_id,
 					role: data.content.role,
 					username: data.content.username,
@@ -74,15 +76,17 @@ const UserPage: React.FC = () => {
 				{generalData.loaded ? "" : "Loading..."}
 			</h4>
 
-			<button className="btn btn-primary"
-			        style={{
-				        padding: "4px 16px",
-				        fontSize: "16px",
-				        marginBottom: "16px"
-			        }}
-			>
-				Change my data
-			</button>
+			{generalData.if_myself ? (
+				<button className="btn btn-primary"
+				        style={{
+					        padding: "4px 16px",
+					        fontSize: "16px",
+					        marginBottom: "16px"
+				        }}
+				>
+					Change my data
+				</button>
+			) : ""}
 
 			<table className="grade-table table table-sm table-striped">
 				<thead>
