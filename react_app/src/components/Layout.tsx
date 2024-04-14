@@ -1,7 +1,10 @@
 import { Outlet } from "react-router-dom";
 import '../styles/layout.css';
+import {getAuthCookie} from "../scripts/cookies";
 
 const Layout = () => {
+	let authKey = getAuthCookie();
+
 	return (
 		<>
 			<div className="menu navbar">
@@ -12,7 +15,7 @@ const Layout = () => {
 					<a className="menu-link" href="/main/">
 						Grades
 					</a>
-					<a className="menu-link" href="/my-profile/">
+					<a className="menu-link" href={"/user/?auth="+authKey}>
 						My Profile
 					</a>
 				</div>

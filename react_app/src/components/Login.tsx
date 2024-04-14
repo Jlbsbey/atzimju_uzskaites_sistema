@@ -10,7 +10,6 @@ const Login: React.FC = () => {
 	const submit = () => {
 		user_login(username, password)
 			.then((status: boolean) => {
-				console.log(status);
 				if (!status) {
 					setError('Invalid username or password');
 				} else {
