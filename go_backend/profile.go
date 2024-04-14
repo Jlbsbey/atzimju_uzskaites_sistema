@@ -22,12 +22,15 @@ type Data struct {
 func ProfilePage(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
-	userID, _ := strconv.Atoi(queryParams.Get("user"))
+	userID, err := strconv.Atoi(queryParams.Get("user"))
 	originUserID := getUserID(session)
 	if originUserID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
 		return
+	}
+	if err != nil {
+		userID = originUserID
 	}
 	sameUsers := userID == originUserID
 	userData := getInfo(userID, sameUsers, originUserID)
