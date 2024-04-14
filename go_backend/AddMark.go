@@ -15,7 +15,7 @@ func AddMark(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
 	studentID, _ := strconv.Atoi(queryParams.Get("student_id"))
-	subjectID, _ := strconv.Atoi(queryParams.Get("subject"))
+	subjectID, _ := strconv.Atoi(queryParams.Get("subject_id"))
 	mark, _ := strconv.Atoi(queryParams.Get("value"))
 	markID, _ := strconv.Atoi(queryParams.Get("mark_id"))
 	if mark > 10 || mark <= 0 {
