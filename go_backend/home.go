@@ -110,7 +110,8 @@ func getMarks(subject int, userID int) []Mark {
 	var marks []Mark
 	var number, markID, prof, studID int
 	var create, edit time.Time
-	query := `SELECT mark_id, student_id, professor_id, subject_id, value, create_date, edit_date FROM marks WHERE subject_id = ? AND student_id = ? OR professor_id = ?`
+	query := `SELECT mark_id, student_id, professor_id, subject_id, value, create_date, edit_date FROM marks WHERE subject_id = ? AND (student_id = ? OR professor_id = ?)`
+
 	lg, err := db.Query(query, subject, userID, userID)
 	if err != nil {
 		panic(err)

@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"golang.org/x/crypto/argon2"
 	"log"
 	"net/http"
@@ -159,7 +160,9 @@ func ClearSessionsOnce() {
 
 	var sessionID string
 	var expireTime time.Time
-	now := time.Now().Add(time.Hour * 1).In(location)
+	now := time.Now().In(location)
+	fmt.Println(now)
+	fmt.Println(time.Now().In(location))
 	if err != nil {
 		panic(err)
 	}
