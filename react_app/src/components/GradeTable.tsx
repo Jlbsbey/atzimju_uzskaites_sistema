@@ -20,7 +20,7 @@ const GradeTable: React.FC<GradeTableProperties> = ({
 			<tr key={mark.mark_id}>
 				<td className="grade-table-t-first">{mark.value}</td>
 				<td>
-					<a href={`/user?id=${studentMode ? mark.professor_id : mark.student_id}`}>
+					<a href={`/user?id=${studentMode ? mark.professor_id :  mark.student_id }`}>
 						{studentMode ? mark.professor_name : mark.student_name}
 					</a>
 				</td>

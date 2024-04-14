@@ -16,8 +16,8 @@ export function getHomeData(): Promise<Response> {
 		console.log(marks)
 
 		for (let mark of marks) {
-			mark.professor_name = users.find((user: User) => user.user_id === mark.professor_id)?.username;
-			mark.student_name = users.find((user: User) => user.user_id === mark.student_id)?.username;
+			mark.professor_name = users.find((user: User) => user.user_id === mark.professor_id)?.name;
+			mark.student_name = users.find((user: User) => user.user_id === mark.student_id)?.name;
 		}
 
 		data.content.marks = marks;
