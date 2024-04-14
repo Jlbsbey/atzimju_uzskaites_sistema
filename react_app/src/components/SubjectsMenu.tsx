@@ -1,12 +1,14 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import SubjectsMenuItem from "./SubjectsMenuItem";
-import {Subject, subjects} from "../scripts/data";
+import {Subject} from "../scripts/data";
+import {getHomeData} from "../scripts/home";
 
 interface SubjectsMenuProperties {
 	onSubjectClick: (subject: Subject) => void;
+	subjects: Subject[];
 }
 
-const SubjectsMenu: React.FC<SubjectsMenuProperties> = ({onSubjectClick}) => {
+const SubjectsMenu: React.FC<SubjectsMenuProperties> = ({onSubjectClick, subjects}) => {
 	const [activeSubject, setActiveSubject] = useState(subjects[0]);
 
 	const activeSubjectIdChange = (subject: Subject) => {
@@ -21,10 +23,8 @@ const SubjectsMenu: React.FC<SubjectsMenuProperties> = ({onSubjectClick}) => {
 				{subjects.map((subject, index) => (
 					<SubjectsMenuItem
 						key={index}
-						name={subject.name}
-						description={subject.description}
-						last_updated={subject.last_updated}
-						professor={subject.professor}
+						name={subject.subject_name}
+						description={subject.subject_description}
 						is_active={subject.subject_id === activeSubject.subject_id}
 						on_click={() => activeSubjectIdChange(subject)}
 					/>
