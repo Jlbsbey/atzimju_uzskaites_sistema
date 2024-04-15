@@ -33,12 +33,12 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 	} else if email != "" && isAdmin {
 		updateData(userID, email, "email")
 	}
-	if newName != "" && sameUsers {
+	if newName != "" && sameUsers && isAdmin {
 		updateData(originUserID, newName, "name")
 	} else if newName != "" && isAdmin {
 		updateData(userID, newName, "name")
 	}
-	if newSurname != "" && sameUsers {
+	if newSurname != "" && sameUsers && isAdmin {
 		updateData(originUserID, newSurname, "surname")
 	} else if newSurname != "" && isAdmin {
 		updateData(userID, newSurname, "surname")
