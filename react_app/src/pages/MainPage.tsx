@@ -137,13 +137,12 @@ const MainPage: React.FC = () => {
 										if (overlayEditMarkActive === -1) {
 											if (overlayAddMarkActive) {
 												// submit add
-												let studentElement = document.getElementById("student-input") as HTMLInputElement;
-												let studentString = studentElement ? studentElement.value : '';
-												let student = parseInt(studentString);
+												let studentUsernameElement = document.getElementById("student-input") as HTMLInputElement;
+												let studentUsername = studentUsernameElement ? studentUsernameElement.value : '';
 												let markElement = document.getElementById("mark-input") as HTMLInputElement;
 												let markString = markElement ? markElement.value : '';
 												let mark = parseInt(markString);
-												markEditor(student, activeSubject.subject_id, mark, -1);
+												markEditor(studentUsername, activeSubject.subject_id, mark, -1);
 												loadData();
 
 												setOverlayMarkActive(false);
@@ -156,7 +155,7 @@ const MainPage: React.FC = () => {
 											let markElement = document.getElementById("mark-input") as HTMLInputElement;
 											let markString = markElement ? markElement.value : '';
 											let mark = parseInt(markString);
-											markEditor(generalData.user_id, activeSubject.subject_id, mark, overlayEditMarkActive);
+											markEditor("", activeSubject.subject_id, mark, overlayEditMarkActive);
 											loadData();
 
 											setOverlayEditMarkActive(-1);

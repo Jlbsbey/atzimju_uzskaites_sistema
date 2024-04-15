@@ -2,14 +2,14 @@ import {sendRequest} from "./request";
 import {getAuthCookie} from "./cookies";
 
 export function markEditor(
-	studentId: number,
+	username: string,
 	subjectId: number,
 	value: number,
 	markId: number
 ) {
 	let auth = getAuthCookie();
 
-	let request = "addMark?student_id=" + studentId +
+	let request = "addMark?username=" + username +
 						 "&subject_id=" + subjectId +
 						 "&value=" + value;
 	console.log(markId)
