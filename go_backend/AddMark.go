@@ -14,7 +14,7 @@ import (
 func AddMark(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
-	studentID, _ := strconv.Atoi(queryParams.Get("student_id"))
+	student_name := queryParams.Get("username")
 	subjectID, _ := strconv.Atoi(queryParams.Get("subject_id"))
 	mark, _ := strconv.Atoi(queryParams.Get("value"))
 	markID, _ := strconv.Atoi(queryParams.Get("mark_id"))
@@ -23,6 +23,7 @@ func AddMark(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
+	studentID := UserIDbyUsername(student_name)
 	userID := getUserID(session)
 	if userID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
