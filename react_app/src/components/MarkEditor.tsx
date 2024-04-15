@@ -32,7 +32,7 @@ const MarkEditor: React.FC<GradeTableProperties> = ({
 						Mark
 					</td>
 					<td>
-						<input type="number"/>
+						<input type="number" id="mark-input"/>
 					</td>
 				</tr>
 			</table>

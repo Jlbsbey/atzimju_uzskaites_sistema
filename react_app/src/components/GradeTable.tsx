@@ -42,6 +42,7 @@ const GradeTable: React.FC<GradeTableProperties> = ({
 						        }}
 						        onClick={() => {
 							        setOverlayAddMarkActive(false);
+									console.log("mark id:" + mark.mark_id)
 							        setOverlayEditMarkActive(mark.mark_id);
 						        }}
 						>

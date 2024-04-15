@@ -7,6 +7,7 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import {getHomeData} from "../scripts/home";
 import MarkEditor from "../components/MarkEditor";
+import {markEditor} from "../scripts/markEditor";
 
 const MainPage: React.FC = () => {
 	const [subjects, setSubjects] = useState<Subject[]>(
@@ -48,12 +49,11 @@ const MainPage: React.FC = () => {
 		role: ""
 	});
 
-	useEffect(() => {
+	function loadData() {
 		getHomeData().then((data) => {
 			setSubjects(data.content.subjects);
 			setActiveSubject(data.content.subjects[0]);
-			setActiveMarks(data.content.marks.filter((mark: Mark) =>
-				mark.subject_id === activeSubject.subject_id
+			setActiveMarks(data.content.marks.filter((mark: Mark) => mark.subject_id === activeSubject.subject_id
 			));
 			setMarks(data.content.marks);
 			setUsers(data.content.users);
@@ -62,10 +62,9 @@ const MainPage: React.FC = () => {
 					loaded: true,
 					user_id: data.content.user_id,
 					role: data.content.role
-				}
-			)
+				})
 		});
-	}, []);
+	}
 
 	function changeActiveSubject(subject: Subject) {
 		setActiveSubject(subject);
@@ -81,6 +80,10 @@ const MainPage: React.FC = () => {
 
 	const [overlayAddMarkActive, setOverlayMarkActive] = useState(false);
 	const [overlayEditMarkActive, setOverlayEditMarkActive] = useState(-1);
+
+	useEffect(() => {
+		loadData();
+	}, [overlayAddMarkActive, overlayEditMarkActive]);
 
 	return (
 		<>
@@ -132,6 +135,12 @@ const MainPage: React.FC = () => {
 										if (overlayEditMarkActive === -1) {
 											if (overlayAddMarkActive) {
 												// submit add
+												let markElement = document.getElementById("mark-input") as HTMLInputElement;
+												let markString = markElement ? markElement.value : '';
+												let mark = parseInt(markString);
+												markEditor(generalData.user_id, activeSubject.subject_id, mark, -1);
+												loadData();
+
 												setOverlayMarkActive(false);
 											} else {
 												setOverlayMarkActive(true);
@@ -139,6 +148,12 @@ const MainPage: React.FC = () => {
 											}
 										} else {
 											// submit edit
+											let markElement = document.getElementById("mark-input") as HTMLInputElement;
+											let markString = markElement ? markElement.value : '';
+											let mark = parseInt(markString);
+											markEditor(generalData.user_id, activeSubject.subject_id, mark, overlayEditMarkActive);
+											loadData();
+
 											setOverlayEditMarkActive(-1);
 										}
 									}}
