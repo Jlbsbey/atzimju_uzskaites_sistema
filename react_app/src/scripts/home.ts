@@ -7,6 +7,10 @@ export function getHomeData(): Promise<Response> {
 	let response = sendRequest("home?auth=" + authKey);
 
 	return response.then((data: Response) => {
+		if (data.content.role === "admin") {
+			window.location.href = "/admin";
+		}
+
 		console.log(data);
 		let marks = data.content.marks;
 		let users = data.content.students;

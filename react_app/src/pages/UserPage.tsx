@@ -125,7 +125,7 @@ const UserPage: React.FC = () => {
 					</tr>
 				</thead>
 				<tbody className="table-group-divider">
-					{subjects.map((subject) => (
+					{subjects?.map((subject) => (
 						<tr key={subject.subject_id}>
 							<td className="grade-table-t-first">
 								{subject.subject_name}
