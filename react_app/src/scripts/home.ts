@@ -7,8 +7,13 @@ export function getHomeData(): Promise<Response> {
 	let response = sendRequest("home?auth=" + authKey);
 
 	return response.then((data: Response) => {
+		if (data.status === "error") {
+			window.location.href = "/session_ended";
+		}
+
 		if (data.content.role === "admin") {
 			window.location.href = "/admin";
+			return data;
 		}
 
 		console.log(data);

@@ -55,7 +55,9 @@ const MainPage: React.FC = () => {
 			setActiveSubject(data.content.subjects[0]);
 			setActiveMarks(data.content.marks.filter((mark: Mark) => mark.subject_id === activeSubject.subject_id
 			));
-			setMarks(data.content.marks);
+			if (marks.length !== 0){
+				setMarks(data.content.marks);
+			}
 			setUsers(data.content.users);
 			setGeneralData(
 				{
