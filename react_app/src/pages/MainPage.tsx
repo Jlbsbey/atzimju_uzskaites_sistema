@@ -135,10 +135,13 @@ const MainPage: React.FC = () => {
 										if (overlayEditMarkActive === -1) {
 											if (overlayAddMarkActive) {
 												// submit add
+												let studentElement = document.getElementById("student-input") as HTMLInputElement;
+												let studentString = studentElement ? studentElement.value : '';
+												let student = parseInt(studentString);
 												let markElement = document.getElementById("mark-input") as HTMLInputElement;
 												let markString = markElement ? markElement.value : '';
 												let mark = parseInt(markString);
-												markEditor(generalData.user_id, activeSubject.subject_id, mark, -1);
+												markEditor(student, activeSubject.subject_id, mark, -1);
 												loadData();
 
 												setOverlayMarkActive(false);

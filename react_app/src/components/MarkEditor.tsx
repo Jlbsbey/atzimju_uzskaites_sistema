@@ -23,7 +23,7 @@ const MarkEditor: React.FC<GradeTableProperties> = ({
 					</th>
 					<th>
 						{mode === "edit" ? student :
-							<input type="text"/>
+							<input type="text" id="student-input"/>
 						}
 					</th>
 				</tr>
