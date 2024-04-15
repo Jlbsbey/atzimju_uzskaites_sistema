@@ -13,13 +13,14 @@ import (
 func AddUser(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
-	name := strings.ToLower(queryParams.Get("name"))
-	surname := strings.ToLower(queryParams.Get("surname"))
+	name := queryParams.Get("name")
+	surname := queryParams.Get("surname")
 	role := queryParams.Get("role")
 	email := strings.ToLower(queryParams.Get("email"))
 	password := queryParams.Get("password")
 	avatarLink := queryParams.Get("avatar_link")
 	userID := getUserID(session)
+	fmt.Println(name, " ", surname)
 	if userID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
@@ -32,7 +33,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 	salt := hashPassword(time.Now().Format("2006-01-02 15:04:05"), "a")
 	hashedPassword := hashPassword(password, salt)
-	username := generateUsername(name, surname)
+	username := generateUsername(strings.ToLower(name), strings.ToLower(surname))
 	if username == "" {
 		var response = Response_Body{Status: "error", Error: "Wtf is this error"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
