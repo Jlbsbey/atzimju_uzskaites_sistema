@@ -21,12 +21,14 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 	originUserID := getUserID(session)
 	isAdmin := checkAdmin(originUserID)
 	sameUsers := userID == originUserID
+	fmt.Println(email)
 	if originUserID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 	if email != "" && sameUsers {
+		fmt.Println("1")
 		updateData(originUserID, email, "email")
 	} else if email != "" && isAdmin {
 		updateData(userID, email, "email")
@@ -47,7 +49,7 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 	} else if newPassword != "" && checkAdmin(userID) {
 		updatePassword(userID, newPassword)
 		clearUserSessions(userID)
-	} else {
+	} else if newPassword != "" {
 		var response = Response_Body{Status: "error", Error: "Password is incorrect"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
 		return
