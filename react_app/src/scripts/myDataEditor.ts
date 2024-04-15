@@ -12,8 +12,4 @@ export function myDataEditor(
 		"&oldPassword=" + oldPassword +
 		"&newPassword=" + newPassword +
 		"&auth=" + auth;
-
-	sendRequest(request).then(data => {
-		window.location.href = "/session_ended";
-	});
 }
