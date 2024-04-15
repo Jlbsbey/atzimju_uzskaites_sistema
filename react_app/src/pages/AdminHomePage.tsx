@@ -150,7 +150,7 @@ const AdminHomePage: React.FC = () => {
 												        emailString,
 												        passwordString,
 												        avatarLinkString,
-												        "professor"
+												        "student"
 											        )
 
 											        loadData();
