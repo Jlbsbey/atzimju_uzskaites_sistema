@@ -18,6 +18,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	role := queryParams.Get("role")
 	email := strings.ToLower(queryParams.Get("email"))
 	password := queryParams.Get("password")
+	avatarLink := queryParams.Get("avatar_link")
 	userID := getUserID(session)
 	if userID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
@@ -37,22 +38,22 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	createUser(name, surname, role, email, hashedPassword, salt, username)
+	createUser(name, surname, role, email, hashedPassword, salt, username, avatarLink)
 	response := Response_Body{Status: "OK"}
 	json.NewEncoder(w).Encode(response)
 }
 
-func createUser(name string, surname string, role string, email string, hashedPassword string, salt string, username string) {
+func createUser(name string, surname string, role string, email string, hashedPassword string, salt string, username string, avatarLink string) {
 	userID := generateRandomInteger(1, math.MaxUint32)
 	if role == "student" {
-		query := `INSERT INTO students(student_id, name, surname, email) VALUES (?, ?, ?, ?)`
-		_, err := db.ExecContext(context.Background(), query, userID, name, surname, email)
+		query := `INSERT INTO students(student_id, name, surname, email, avatar_link) VALUES (?, ?, ?, ?)`
+		_, err := db.ExecContext(context.Background(), query, userID, name, surname, email, avatarLink)
 		if err != nil {
 			panic(err)
 		}
 	} else if role == "professor" {
-		query := `INSERT INTO professors(professor_id, name, surname, email) VALUES (?, ?, ?, ?)`
-		_, err := db.ExecContext(context.Background(), query, userID, name, surname, email)
+		query := `INSERT INTO professors(professor_id, name, surname, email, avatar_link) VALUES (?, ?, ?, ?)`
+		_, err := db.ExecContext(context.Background(), query, userID, name, surname, email, avatarLink)
 		if err != nil {
 			panic(err)
 		}

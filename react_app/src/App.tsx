@@ -12,6 +12,7 @@ import The404Page from "./pages/The404Page";
 import AboutPage from "./pages/AboutPage";
 import SessionEndedPage from "./pages/SessionEndedPage";
 import UserPage from "./pages/UserPage";
+import AdminHomePage from "./pages/AdminHomePage";
 
 function App() {
 	return (
@@ -23,6 +24,7 @@ function App() {
 					<Route path="user" element={<UserPage />} />
 					<Route path="about" element={<AboutPage />} />
 					<Route path="session_ended" element={<SessionEndedPage />} />
+					<Route path="admin" element={<AdminHomePage />} />
 					<Route path="*" element={<The404Page />} />
 				</Route>
 			</Routes>

@@ -3,6 +3,8 @@ import "../styles/user_page.css";
 import {Subject} from "../scripts/data";
 import 'simplebar-react/dist/simplebar.min.css';
 import {getProfileData} from "../scripts/profile";
+import MyDataEditor from "../components/MyDataEditor";
+import {myDataEditor} from "../scripts/myDataEditor";
 
 const UserPage: React.FC = () => {
 	const [subjects, setSubjects] = useState<Subject[]>(
@@ -26,6 +28,9 @@ const UserPage: React.FC = () => {
 		email: "",
 		avatar_link: ""
 	});
+
+	const [editMyData, setEditMyData] = useState(false);
+
 
 	// read from html params
 	const urlParams = new URLSearchParams(window.location.search);
@@ -77,15 +82,38 @@ const UserPage: React.FC = () => {
 			</h4>
 
 			{generalData.if_myself ? (
-				<button className="btn btn-primary"
-				        style={{
-					        padding: "4px 16px",
-					        fontSize: "16px",
-					        marginBottom: "16px"
-				        }}
-				>
-					Change my data
-				</button>
+				<>
+					{editMyData ? <MyDataEditor/> : ""}
+
+					<button className="btn btn-primary"
+					        style={{
+						        padding: "4px 16px",
+						        fontSize: "16px",
+						        marginBottom: "16px"
+					        }}
+					        onClick={() => {
+								if (editMyData) {
+									let newEmailElement = document.getElementById("new-email-input") as HTMLInputElement;
+									let oldPasswordElement = document.getElementById("old-password-input") as HTMLInputElement;
+									let newPasswordElement = document.getElementById("new-password-input") as HTMLInputElement;
+
+									let newEmail = newEmailElement ? newEmailElement.value : '';
+									let oldPassword = oldPasswordElement ? oldPasswordElement.value : '';
+									let newPassword = newPasswordElement ? newPasswordElement.value : '';
+
+									myDataEditor(
+										newEmail,
+										oldPassword,
+										newPassword,
+									);
+								}
+
+								setEditMyData(!editMyData)
+					        }}
+					>
+						Change my data
+					</button>
+				</>
 			) : ""}
 
 			<table className="grade-table table table-sm table-striped">
