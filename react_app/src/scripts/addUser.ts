@@ -11,7 +11,7 @@ export function addUser(
 ) {
 	let auth = getAuthCookie();
 
-	let request = "addMark?name=" + name +
+	let request = "addUser?name=" + name +
 						 "&surname=" + surname +
 						 "&email=" + email +
 						 "&password=" + password +

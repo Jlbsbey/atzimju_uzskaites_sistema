@@ -46,13 +46,13 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 func createUser(name string, surname string, role string, email string, hashedPassword string, salt string, username string, avatarLink string) {
 	userID := generateRandomInteger(1, math.MaxUint32)
 	if role == "student" {
-		query := `INSERT INTO students(student_id, name, surname, email, avatar_link) VALUES (?, ?, ?, ?)`
+		query := `INSERT INTO students(student_id, name, surname, email, avatar_link) VALUES (?, ?, ?, ?, ?)`
 		_, err := db.ExecContext(context.Background(), query, userID, name, surname, email, avatarLink)
 		if err != nil {
 			panic(err)
 		}
 	} else if role == "professor" {
-		query := `INSERT INTO professors(professor_id, name, surname, email, avatar_link) VALUES (?, ?, ?, ?)`
+		query := `INSERT INTO professors(professor_id, name, surname, email, avatar_link) VALUES (?, ?, ?, ?, ?)`
 		_, err := db.ExecContext(context.Background(), query, userID, name, surname, email, avatarLink)
 		if err != nil {
 			panic(err)

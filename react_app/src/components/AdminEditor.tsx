@@ -16,21 +16,31 @@ const AdminEditor: React.FC<AdminEditorProperties> = ({
 
 			<table>
 				{mode === "subjects" && (
-					<tr>
-						<td style={{paddingRight: "20px"}}>
-							Subject name
-						</td>
-						<td>
-							<input id="subject-name-input" type="text"/>
-						</td>
-					</tr>
+					<>
+						<tr>
+							<td>
+								Subject name
+							</td>
+							<td>
+								<input id="subject-input" type="text"/>
+							</td>
+						</tr>
+						<tr>
+							<td style={{paddingRight: "20px"}}>
+								Subject description
+							</td>
+							<td>
+								<input id="description-input" type="text"/>
+							</td>
+						</tr>
+					</>
 				)}
 				{(mode === "students" || mode === "professors") && (
-                    <>
-                        <tr>
-                            <td>
-                                Name
-                            </td>
+					<>
+						<tr>
+							<td>
+								Name
+							</td>
                             <td>
                                 <input id="name-input" type="text"/>
                             </td>
@@ -56,7 +66,7 @@ const AdminEditor: React.FC<AdminEditorProperties> = ({
                                 Password
                             </td>
                             <td>
-                                <input id="password-input" type="text"/>
+                                <input id="password-input" type="password"/>
                             </td>
                         </tr>
                         <tr>

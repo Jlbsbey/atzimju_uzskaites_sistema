@@ -1,16 +1,13 @@
 import React, {useEffect, useState} from "react";
 import "../styles/main_page.css";
-import SubjectsMenu from "../components/SubjectsMenu";
 import {Mark, Subject, User} from "../scripts/data";
-import GradeTable from "../components/GradeTable";
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
-import {getHomeData} from "../scripts/home";
-import MarkEditor from "../components/MarkEditor";
-import {markEditor} from "../scripts/markEditor";
 import SubjectsMenuItem from "../components/SubjectsMenuItem";
 import AdminEditor from "../components/AdminEditor";
 import {getAdminData} from "../scripts/admin";
+import {addUser} from "../scripts/addUser";
+import {addSubject} from "../scripts/addSubject";
 
 const AdminHomePage: React.FC = () => {
 	const [subjects, setSubjects] = useState<Subject[]>(
@@ -117,7 +114,14 @@ const AdminHomePage: React.FC = () => {
 										        if (overlayButtonMode === "subjects") {
 											        // submit add
 											        let subjectElement = document.getElementById("subject-input") as HTMLInputElement;
-											        let studentString = subjectElement ? subjectElement.value : '';
+											        let descriptionElement = document.getElementById("description-input") as HTMLInputElement;
+											        let subjectString = subjectElement ? subjectElement.value : '';
+											        let descriptionString = descriptionElement ? descriptionElement.value : '';
+
+													addSubject(
+												        subjectString,
+														descriptionString
+											        )
 
 											        loadData();
 
@@ -128,8 +132,26 @@ const AdminHomePage: React.FC = () => {
 									        } else if (adminMode === "students") {
 										        if (overlayButtonMode === "students") {
 											        // submit add
-											        let studentElement = document.getElementById("student-input") as HTMLInputElement;
-											        let studentString = studentElement ? studentElement.value : '';
+											        let nameElement = document.getElementById("name-input") as HTMLInputElement;
+											        let surnameElement = document.getElementById("surname-input") as HTMLInputElement;
+											        let emailElement = document.getElementById("email-input") as HTMLInputElement;
+											        let passwordElement = document.getElementById("password-input") as HTMLInputElement;
+											        let avatarLinkElement = document.getElementById("avatar-link-input") as HTMLInputElement;
+
+											        let nameString = nameElement ? nameElement.value : '';
+											        let surnameString = surnameElement ? surnameElement.value : '';
+											        let emailString = emailElement ? emailElement.value : '';
+											        let passwordString = passwordElement ? passwordElement.value : '';
+											        let avatarLinkString = avatarLinkElement ? avatarLinkElement.value : '';
+
+											        addUser(
+												        nameString,
+												        surnameString,
+												        emailString,
+												        passwordString,
+												        avatarLinkString,
+												        "professor"
+											        )
 
 											        loadData();
 
@@ -140,9 +162,26 @@ const AdminHomePage: React.FC = () => {
 									        } else if (adminMode === "professors") {
 										        if (overlayButtonMode === "professors") {
 											        // submit add
-											        let professorElement = document.getElementById("professor-input") as HTMLInputElement;
-											        let professorString = professorElement ? professorElement.value : '';
+											        let nameElement = document.getElementById("name-input") as HTMLInputElement;
+													let surnameElement = document.getElementById("surname-input") as HTMLInputElement;
+													let emailElement = document.getElementById("email-input") as HTMLInputElement;
+													let passwordElement = document.getElementById("password-input") as HTMLInputElement;
+													let avatarLinkElement = document.getElementById("avatar-link-input") as HTMLInputElement;
 
+													let nameString = nameElement ? nameElement.value : '';
+													let surnameString = surnameElement ? surnameElement.value : '';
+													let emailString = emailElement ? emailElement.value : '';
+													let passwordString = passwordElement ? passwordElement.value : '';
+													let avatarLinkString = avatarLinkElement ? avatarLinkElement.value : '';
+
+											        addUser(
+														nameString,
+												        surnameString,
+												        emailString,
+												        passwordString,
+												        avatarLinkString,
+												        "professor"
+													)
 											        loadData();
 
 											        setOverlayButtonMode("");
