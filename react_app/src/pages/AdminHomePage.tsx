@@ -118,9 +118,9 @@ const AdminHomePage: React.FC = () => {
 											        let subjectString = subjectElement ? subjectElement.value : '';
 											        let descriptionString = descriptionElement ? descriptionElement.value : '';
 
-													addSubject(
+											        addSubject(
 												        subjectString,
-														descriptionString
+												        descriptionString
 											        )
 
 											        loadData();
@@ -163,25 +163,25 @@ const AdminHomePage: React.FC = () => {
 										        if (overlayButtonMode === "professors") {
 											        // submit add
 											        let nameElement = document.getElementById("name-input") as HTMLInputElement;
-													let surnameElement = document.getElementById("surname-input") as HTMLInputElement;
-													let emailElement = document.getElementById("email-input") as HTMLInputElement;
-													let passwordElement = document.getElementById("password-input") as HTMLInputElement;
-													let avatarLinkElement = document.getElementById("avatar-link-input") as HTMLInputElement;
+											        let surnameElement = document.getElementById("surname-input") as HTMLInputElement;
+											        let emailElement = document.getElementById("email-input") as HTMLInputElement;
+											        let passwordElement = document.getElementById("password-input") as HTMLInputElement;
+											        let avatarLinkElement = document.getElementById("avatar-link-input") as HTMLInputElement;
 
-													let nameString = nameElement ? nameElement.value : '';
-													let surnameString = surnameElement ? surnameElement.value : '';
-													let emailString = emailElement ? emailElement.value : '';
-													let passwordString = passwordElement ? passwordElement.value : '';
-													let avatarLinkString = avatarLinkElement ? avatarLinkElement.value : '';
+											        let nameString = nameElement ? nameElement.value : '';
+											        let surnameString = surnameElement ? surnameElement.value : '';
+											        let emailString = emailElement ? emailElement.value : '';
+											        let passwordString = passwordElement ? passwordElement.value : '';
+											        let avatarLinkString = avatarLinkElement ? avatarLinkElement.value : '';
 
 											        addUser(
-														nameString,
+												        nameString,
 												        surnameString,
 												        emailString,
 												        passwordString,
 												        avatarLinkString,
 												        "professor"
-													)
+											        )
 											        loadData();
 
 											        setOverlayButtonMode("");
@@ -194,6 +194,54 @@ const AdminHomePage: React.FC = () => {
 									Add {adminMode.slice(0, -1)}
 								</button>
 							)}
+
+							<table className="grade-table table table-sm table-striped"
+							       style={{minWidth: "600px"}}
+							       >
+								<thead>
+								<tr>
+									{adminMode === "subjects" && (
+										<>
+											<th className="grade-table-t-first">
+												All {adminMode.charAt(0).toUpperCase() + adminMode.slice(1)}
+											</th>
+											<th>
+												Description
+											</th>
+											<th>
+												Edit
+											</th>
+										</>
+									)}
+								</tr>
+								</thead>
+								<tbody className="table-group-divider">
+								{subjects?.map((subject) => (
+									<tr key={subject.subject_id}>
+										<td className="grade-table-t-first">
+											{subject.subject_name}
+										</td>
+										<td>
+											{subject.subject_description}
+										</td>
+										<td>
+											<button className="btn btn-primary"
+											        style={{
+												        padding: "0 12px",
+												        fontSize: "12px",
+												        fontWeight: "bold"
+											        }}
+											        onClick={() => {
+														/// add here
+											        }}
+											>
+												Edit
+											</button>
+										</td>
+									</tr>
+								))}
+								</tbody>
+							</table>
 						</>
 					)}
 

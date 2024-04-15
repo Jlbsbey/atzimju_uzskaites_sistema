@@ -102,10 +102,12 @@ const UserPage: React.FC = () => {
 									let newPassword = newPasswordElement ? newPasswordElement.value : '';
 
 									myDataEditor(
+										generalData.username,
 										newEmail,
 										oldPassword,
 										newPassword,
 									);
+									window.location.reload();
 								}
 
 								setEditMyData(!editMyData)
