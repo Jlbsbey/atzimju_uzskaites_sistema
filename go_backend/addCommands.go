@@ -36,7 +36,7 @@ func AddSubject(w http.ResponseWriter, r *http.Request) {
 func ChangeUserData(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
-	userID, _ := strconv.Atoi(queryParams.Get("user"))
+	username := queryParams.Get("username")
 	email := queryParams.Get("email")
 	name := queryParams.Get("name")
 	surname := queryParams.Get("surname")
@@ -46,6 +46,7 @@ func ChangeUserData(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
+	userID := UserIDbyUsername(username)
 	if checkAdmin(originUserID) {
 		if email != "" {
 			updateData(userID, email, "email")
@@ -65,7 +66,7 @@ func ChangeUserData(w http.ResponseWriter, r *http.Request) {
 func ChangeUserSubjects(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
-	userID, _ := strconv.Atoi(queryParams.Get("user_id"))
+	username := queryParams.Get("username")
 	subjects := queryParams.Get("subjects")
 	originUserID := getUserID(session)
 	if originUserID == -1 {
@@ -73,12 +74,13 @@ func ChangeUserSubjects(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
+	userID := UserIDbyUsername(username)
 	if checkAdmin(originUserID) {
 		subjectList := strings.Split(subjects, ",")
 		_, role := getSubjects(userID)
 		err := updateSubjects(subjectList, userID, role)
 		if err == 1 {
-			var response = Response_Body{Status: "error", Error: "Incorrect role and/or userID"}
+			var response = Response_Body{Status: "error", Error: "Incorrect role and/or username"}
 			json.NewEncoder(w).Encode(response)
 		}
 		var response = Response_Body{Status: "OK"}

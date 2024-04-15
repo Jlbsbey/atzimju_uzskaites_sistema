@@ -10,51 +10,64 @@ import (
 
 func ChangeData(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
-	session := queryParams.Get("auth")
-	email := queryParams.Get("email")
-	oldPassword := queryParams.Get("oldPassword")
-	newPassword := queryParams.Get("newPassword")
-	newName := queryParams.Get("newName")
-	newSurname := queryParams.Get("newSurname")
-	userID := getUserID(session)
-	if userID == -1 {
+	session := queryParams.Get("auth")            //all
+	email := queryParams.Get("email")             //all
+	oldPassword := queryParams.Get("oldPassword") //all
+	newPassword := queryParams.Get("newPassword") //all
+	newName := queryParams.Get("newName")         //admin
+	newSurname := queryParams.Get("newSurname")   //admin
+	username := queryParams.Get("username")       //all
+	userID := UserIDbyUsername(username)
+	originUserID := getUserID(session)
+	isAdmin := checkAdmin(originUserID)
+	sameUsers := userID == originUserID
+	if originUserID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	if oldPassword == "" {
-		if email != "" {
-			updateData(userID, email, "email")
-		}
-		if newName != "" && checkAdmin(userID) {
-			updateData(userID, newName, "name")
-		}
-		if newSurname != "" && checkAdmin(userID) {
-			updateData(userID, newSurname, "surname")
-		}
-		var response = Response_Body{Status: "OK", Error: ""} //истекло время сессии или пользователь не был найден по сессии
-		json.NewEncoder(w).Encode(response)
-		return
+	if email != "" && sameUsers {
+		updateData(originUserID, email, "email")
+	} else if email != "" && isAdmin {
+		updateData(userID, email, "email")
 	}
-	if checkValidity(userID, oldPassword) {
-		if email != "" {
-			updateData(userID, email, "email")
-		}
-		if newName != "" && checkAdmin(userID) {
-			updateData(userID, newName, "name")
-		}
-		if newSurname != "" && checkAdmin(userID) {
-			updateData(userID, newSurname, "surname")
-		}
+	if newName != "" && sameUsers {
+		updateData(originUserID, newName, "name")
+	} else if newName != "" && isAdmin {
+		updateData(userID, newName, "name")
+	}
+	if newSurname != "" && sameUsers {
+		updateData(originUserID, newSurname, "surname")
+	} else if newSurname != "" && isAdmin {
+		updateData(userID, newSurname, "surname")
+	}
+	if oldPassword != "" && checkValidity(userID, oldPassword) && sameUsers {
+		updatePassword(originUserID, newPassword)
+		clearUserSessions(originUserID)
+	} else if newPassword != "" && checkAdmin(userID) {
 		updatePassword(userID, newPassword)
 		clearUserSessions(userID)
-		var response = Response_Body{Status: "OK", Error: ""} //истекло время сессии или пользователь не был найден по сессии
+	} else {
+		var response = Response_Body{Status: "error", Error: "Password is incorrect"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	//очистка всех сессий связанных с юзерид
-	var response = Response_Body{Status: "error", Error: "Password is incorrect"} //истекло время сессии или пользователь не был найден по сессии
+	var response = Response_Body{Status: "OK", Error: ""} //истекло время сессии или пользователь не был найден по сессии
 	json.NewEncoder(w).Encode(response)
+	return
+
+}
+
+func UserIDbyUsername(username string) int {
+	var userID int
+	query := `SELECT user_id FROM login_details WHERE username = ?`
+	lg, err := db.Query(query, username)
+	for lg.Next() {
+		if err = lg.Scan(&userID); err != nil {
+			log.Println(err)
+		}
+	}
+	return userID
 }
 
 func checkValidity(userID int, oldPassword string) bool {

@@ -46,7 +46,7 @@ func main() {
 	//router.HandleFunc("/studentList", StudentList).Methods("GET")
 	router.HandleFunc("/addMark", AddMark).Methods("GET")
 	router.HandleFunc("/addSubject", AddSubject).Methods("GET")
-	router.HandleFunc("/changeUserData", ChangeUserData).Methods("GET")
+	//router.HandleFunc("/changeUserData", ChangeUserData).Methods("GET")
 	router.HandleFunc("/changeUserSubjects", ChangeUserSubjects).Methods("GET")
 	router.HandleFunc("/searchSubjects", SearchSubjects).Methods("GET")
 	router.HandleFunc("/addUser", AddUser).Methods("GET")
