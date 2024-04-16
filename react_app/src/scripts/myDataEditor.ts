@@ -10,8 +10,11 @@ export function myDataEditor(
 	let auth = getAuthCookie();
 
 	let request = "changeData?username=" + username +
-		"changeData?email=" + email +
+		"&email=" + email +
 		"&oldPassword=" + oldPassword +
 		"&newPassword=" + newPassword +
 		"&auth=" + auth;
+
+	sendRequest(request).then(data => {
+	});
 }

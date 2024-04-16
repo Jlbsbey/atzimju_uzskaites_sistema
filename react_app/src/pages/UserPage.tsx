@@ -107,7 +107,7 @@ const UserPage: React.FC = () => {
 										oldPassword,
 										newPassword,
 									);
-									window.location.reload();
+									//window.location.reload();
 								}
 
 								setEditMyData(!editMyData)
