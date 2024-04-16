@@ -33,36 +33,6 @@ func AddSubject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ChangeUserData(w http.ResponseWriter, r *http.Request) {
-	queryParams := r.URL.Query()
-	session := queryParams.Get("auth")
-	username := queryParams.Get("username")
-	email := queryParams.Get("email")
-	name := queryParams.Get("name")
-	surname := queryParams.Get("surname")
-	originUserID := getUserID(session)
-	if originUserID == -1 {
-		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-	userID := UserIDbyUsername(username)
-	if checkAdmin(originUserID) {
-		if email != "" {
-			updateData(userID, email, "email")
-		}
-		if name != "" {
-			updateData(userID, name, "name")
-		}
-		if surname != "" {
-			updateData(userID, surname, "surname")
-		}
-		var response = Response_Body{Status: "OK"}
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-}
-
 func ChangeUserSubjects(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	session := queryParams.Get("auth")
