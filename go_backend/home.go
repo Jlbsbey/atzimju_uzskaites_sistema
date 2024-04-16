@@ -210,7 +210,7 @@ func getUserID(session string) int {
 		if err = lg.Scan(&login, &DBexpire); err != nil {
 			log.Println(err)
 		}
-		if time.Now().After(DBexpire) {
+		if time.Now().In(location).After(DBexpire) {
 			return -1
 		}
 		return login

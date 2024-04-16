@@ -21,7 +21,6 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 	originUserID := getUserID(session)
 	isAdmin := checkAdmin(originUserID)
 	sameUsers := userID == originUserID
-	fmt.Println(email)
 	if originUserID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
 		json.NewEncoder(w).Encode(response)
@@ -107,7 +106,7 @@ func updateData(userID int, email string, dataType string) {
 			if err != nil {
 				panic(err)
 			}
-		} else if role == "professors" {
+		} else if role == "professor" {
 			query = fmt.Sprintf("UPDATE professors SET %s = ? WHERE professor_id = ?", dataType)
 			_, err = db.Query(query, email, userID)
 			if err != nil {
