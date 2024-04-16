@@ -11,7 +11,14 @@ const AdminEditor: React.FC<AdminEditorProperties> = ({
 	return (
 		<div className="overlay_mark">
 			<h3>
-				Add {mode.slice(0, -1)}
+				{(mode === "subjects" ||
+				mode === "students" ||
+				mode === "professors") &&
+					"Add " + mode.slice(0, -1)
+				}
+				{mode === "subject-edit" &&
+					"Edit subject"
+				}
 			</h3>
 
 			<table>
@@ -78,6 +85,27 @@ const AdminEditor: React.FC<AdminEditorProperties> = ({
                             </td>
                         </tr>
                     </>
+				)}
+
+				{mode === "subject-edit" && (
+					<>
+						<tr>
+							<td>
+								Subject name
+							</td>
+							<td>
+								<input id="subject-input" type="text"/>
+							</td>
+						</tr>
+						<tr>
+							<td style={{paddingRight: "20px"}}>
+								Subject description
+							</td>
+							<td>
+								<input id="description-input" type="text"/>
+							</td>
+						</tr>
+					</>
 				)}
 
 

@@ -52,7 +52,9 @@ const MainPage: React.FC = () => {
 	function loadData() {
 		getHomeData().then((data) => {
 			setSubjects(data.content.subjects);
-			setActiveSubject(data.content.subjects[0]);
+			if (!generalData.loaded) {
+				setActiveSubject(data.content.subjects[0]);
+			}
 			setActiveMarks(data.content.marks.filter((mark: Mark) => mark.subject_id === activeSubject.subject_id
 			));
 			if (marks.length !== 0){
@@ -142,6 +144,7 @@ const MainPage: React.FC = () => {
 												let markElement = document.getElementById("mark-input") as HTMLInputElement;
 												let markString = markElement ? markElement.value : '';
 												let mark = parseInt(markString);
+												console.log(activeSubject)
 												markEditor(studentUsername, activeSubject.subject_id, mark, -1);
 												loadData();
 

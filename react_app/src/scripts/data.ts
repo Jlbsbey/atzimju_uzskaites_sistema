@@ -26,4 +26,5 @@ export interface Subject {
 export interface User {
 	user_id: number;
 	username: string;
+	name?: string;
 }

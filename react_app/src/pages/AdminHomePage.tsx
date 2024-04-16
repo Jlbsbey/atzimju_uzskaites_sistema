@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "../styles/main_page.css";
-import {Mark, Subject, User} from "../scripts/data";
+import {Subject, User} from "../scripts/data";
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import SubjectsMenuItem from "../components/SubjectsMenuItem";
@@ -8,6 +8,7 @@ import AdminEditor from "../components/AdminEditor";
 import {getAdminData} from "../scripts/admin";
 import {addUser} from "../scripts/addUser";
 import {addSubject} from "../scripts/addSubject";
+import internal from "node:stream";
 
 const AdminHomePage: React.FC = () => {
 	const [subjects, setSubjects] = useState<Subject[]>(
@@ -20,7 +21,15 @@ const AdminHomePage: React.FC = () => {
 			}
 		]
 	);
-	const [users, setUsers] = useState<User[]>(
+	const [students, setStundets] = useState<User[]>(
+		[
+			{
+				user_id: 0,
+				username: ""
+			}
+		]
+	);
+	const [professors, setProfessors] = useState<User[]>(
 		[
 			{
 				user_id: 0,
@@ -37,7 +46,9 @@ const AdminHomePage: React.FC = () => {
 	function loadData() {
 		getAdminData().then((data) => {
 			setSubjects(data.content.subjects);
-			setUsers(data.content.users);
+			setStundets(data.content.students);
+			setProfessors(data.content.professors);
+			console.log(students);
 			setGeneralData(
 				{
 					loaded: true,
@@ -49,6 +60,7 @@ const AdminHomePage: React.FC = () => {
 
 	const [adminMode, setAdminMode] = useState("subjects");
 	const [overlayButtonMode, setOverlayButtonMode] = useState("");
+	const [editSubject, setEditSubject] = useState<number>(0);
 
 	useEffect(() => {
 		loadData();
@@ -111,24 +123,41 @@ const AdminHomePage: React.FC = () => {
 								        }}
 								        onClick={() => {
 									        if (adminMode === "subjects") {
-										        if (overlayButtonMode === "subjects") {
-											        // submit add
-											        let subjectElement = document.getElementById("subject-input") as HTMLInputElement;
-											        let descriptionElement = document.getElementById("description-input") as HTMLInputElement;
-											        let subjectString = subjectElement ? subjectElement.value : '';
-											        let descriptionString = descriptionElement ? descriptionElement.value : '';
 
-											        addSubject(
-												        subjectString,
-												        descriptionString
-											        )
+												if (editSubject !== -1) {
+													if (overlayButtonMode === "subjects") {
+														// submit add
+														let subjectElement = document.getElementById("subject-input") as HTMLInputElement;
+														let descriptionElement = document.getElementById("description-input") as HTMLInputElement;
+														let subjectString = subjectElement ? subjectElement.value : '';
+														let descriptionString = descriptionElement ? descriptionElement.value : '';
 
-											        loadData();
+														addSubject(
+															subjectString,
+															descriptionString
+														)
 
-											        setOverlayButtonMode("");
-										        } else {
-											        setOverlayButtonMode("subjects");
-										        }
+														loadData();
+
+														setOverlayButtonMode("");
+														setEditSubject(-1);
+													} else {
+														setOverlayButtonMode("subjects");
+														setEditSubject(-1);
+													}
+												} else {
+													let subjectElement = document.getElementById("subject-input") as HTMLInputElement;
+													let descriptionElement = document.getElementById("description-input") as HTMLInputElement;
+													let subjectString = subjectElement ? subjectElement.value : '';
+													let descriptionString = descriptionElement ? descriptionElement.value : '';
+
+													// submit
+
+													setOverlayButtonMode("");
+													setEditSubject(-1);
+												}
+
+
 									        } else if (adminMode === "students") {
 										        if (overlayButtonMode === "students") {
 											        // submit add
@@ -158,6 +187,7 @@ const AdminHomePage: React.FC = () => {
 											        setOverlayButtonMode("");
 										        } else {
 											        setOverlayButtonMode("students");
+											        setEditSubject(-1);
 										        }
 									        } else if (adminMode === "professors") {
 										        if (overlayButtonMode === "professors") {
@@ -187,6 +217,7 @@ const AdminHomePage: React.FC = () => {
 											        setOverlayButtonMode("");
 										        } else {
 											        setOverlayButtonMode("professors");
+											        setEditSubject(-1);
 										        }
 									        }
 								        }}
@@ -203,20 +234,34 @@ const AdminHomePage: React.FC = () => {
 									{adminMode === "subjects" && (
 										<>
 											<th className="grade-table-t-first">
-												All {adminMode.charAt(0).toUpperCase() + adminMode.slice(1)}
+												{adminMode.charAt(0).toUpperCase() + adminMode.slice(1, -1)}
 											</th>
 											<th>
 												Description
 											</th>
-											<th>
-												Edit
+										</>
+									)}
+
+									{adminMode === "students" && (
+										<>
+											<th className="grade-table-t-first">
+												{adminMode.charAt(0).toUpperCase() + adminMode.slice(1, -1)}
+											</th>
+										</>
+									)}
+
+									{adminMode === "professors" && (
+										<>
+											<th className="grade-table-t-first">
+												{adminMode.charAt(0).toUpperCase() + adminMode.slice(1, -1)}
 											</th>
 										</>
 									)}
 								</tr>
 								</thead>
 								<tbody className="table-group-divider">
-								{subjects?.map((subject) => (
+								{adminMode === "subjects" && (
+									subjects?.map((subject) => (
 									<tr key={subject.subject_id}>
 										<td className="grade-table-t-first">
 											{subject.subject_name}
@@ -224,22 +269,30 @@ const AdminHomePage: React.FC = () => {
 										<td>
 											{subject.subject_description}
 										</td>
-										<td>
-											<button className="btn btn-primary"
-											        style={{
-												        padding: "0 12px",
-												        fontSize: "12px",
-												        fontWeight: "bold"
-											        }}
-											        onClick={() => {
-														/// add here
-											        }}
-											>
-												Edit
-											</button>
+									</tr>
+								)))}
+
+								{adminMode === "students" && (
+									students?.map((student) => (
+									<tr key={student.user_id}>
+										<td className="grade-table-t-first">
+											<a href={"/user?id=" + student.user_id}>
+												{student.name}
+											</a>
 										</td>
 									</tr>
-								))}
+								)))}
+
+								{adminMode === "professors" && (
+									professors?.map((professor) => (
+										<tr key={professor.user_id}>
+											<td className="grade-table-t-first">
+												<a href={"/user?id=" + professor.user_id}>
+													{professor.name}
+												</a>
+											</td>
+										</tr>
+									)))}
 								</tbody>
 							</table>
 						</>

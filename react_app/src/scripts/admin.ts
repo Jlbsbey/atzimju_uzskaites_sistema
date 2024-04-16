@@ -8,10 +8,6 @@ export function getAdminData(): Promise<Response> {
 
 	return response.then((data: Response) => {
 		console.log(data);
-		let users = data.content.students;
-		users.push(...data.content.professors);
-		let subjects = data.content.subjects;
-
 		return data;
 	});
 }

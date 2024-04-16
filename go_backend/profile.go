@@ -10,6 +10,7 @@ import (
 
 type Data struct {
 	IfMyself   bool      `json:"if_myself"`
+	IfAdmin    bool      `json:"if_admin"`
 	Username   string    `json:"username"`
 	Name       string    `json:"name"`
 	Surname    string    `json:"surname"`
@@ -65,8 +66,12 @@ func getInfo(userID int, sameUsers bool, adminID int) Data {
 			log.Println(err)
 		}
 	}
+
+	isAdmin := checkAdmin(adminID)
+
 	return Data{
 		IfMyself:   sameUsers,
+		IfAdmin:    isAdmin,
 		Username:   username,
 		Name:       name,
 		Surname:    surname,

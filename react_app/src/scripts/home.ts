@@ -16,13 +16,10 @@ export function getHomeData(): Promise<Response> {
 			return data;
 		}
 
-		console.log(data);
 		let marks = data.content.marks;
 		let users = data.content.students;
 		users.push(...data.content.professors);
 		let subjects = data.content.subjects;
-
-		console.log(marks)
 
 		for (let mark of marks) {
 			mark.professor_name = users.find((user: User) => user.user_id === mark.professor_id)?.name;
