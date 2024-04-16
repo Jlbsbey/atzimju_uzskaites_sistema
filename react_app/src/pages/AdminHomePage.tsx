@@ -234,6 +234,9 @@ const AdminHomePage: React.FC = () => {
 									{adminMode === "subjects" && (
 										<>
 											<th className="grade-table-t-first">
+												Id
+											</th>
+											<th>
 												{adminMode.charAt(0).toUpperCase() + adminMode.slice(1, -1)}
 											</th>
 											<th>
@@ -262,19 +265,22 @@ const AdminHomePage: React.FC = () => {
 								<tbody className="table-group-divider">
 								{adminMode === "subjects" && (
 									subjects?.map((subject) => (
-									<tr key={subject.subject_id}>
-										<td className="grade-table-t-first">
-											{subject.subject_name}
-										</td>
-										<td>
-											{subject.subject_description}
-										</td>
-									</tr>
-								)))}
+										<tr key={subject.subject_id}>
+											<td className="grade-table-t-first">
+												{subject.subject_id}
+											</td>
+											<td>
+												{subject.subject_name}
+											</td>
+											<td>
+												{subject.subject_description}
+											</td>
+										</tr>
+									)))}
 
 								{adminMode === "students" && (
 									students?.map((student) => (
-									<tr key={student.user_id}>
+										<tr key={student.user_id}>
 										<td className="grade-table-t-first">
 											<a href={"/user?id=" + student.user_id}>
 												{student.name}
