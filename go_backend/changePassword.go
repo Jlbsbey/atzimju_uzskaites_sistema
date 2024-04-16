@@ -20,6 +20,7 @@ func ChangeData(w http.ResponseWriter, r *http.Request) {
 	userID := UserIDbyUsername(username)
 	originUserID := getUserID(session)
 	isAdmin := checkAdmin(originUserID)
+	json.NewEncoder(w).Encode(isAdmin)
 	sameUsers := userID == originUserID
 	if originUserID == -1 {
 		var response = Response_Body{Status: "error", Error: "Session expired"} //истекло время сессии или пользователь не был найден по сессии
