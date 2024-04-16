@@ -131,7 +131,7 @@ const UserPage: React.FC = () => {
 								setEditMyData(!editMyData)
 					        }}
 					>
-						Change my data
+						Change data
 					</button>
 				</>
 			) : ""}
@@ -170,7 +170,7 @@ const UserPage: React.FC = () => {
 								       textAlign: "left",
 								       verticalAlign: "top",
 							       }}
-							       placeholder="Subject ids separated with comma and no whitespace (e.g. 1,2,3)"
+							       placeholder="Enter user subject ids separated with comma and no whitespace (e.g. 1,2,3). List should contain all subjects, not just new ones."
 							       id="subject-id-input"
 							/>
 
@@ -197,7 +197,7 @@ const UserPage: React.FC = () => {
 
 									setEditSubjects(false);
 									setTimeout(() => {
-										//window.location.reload();
+										window.location.reload();
 									}, 500);
 								} else {
 									setEditSubjects(true);
