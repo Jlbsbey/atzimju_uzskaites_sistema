@@ -35,7 +35,7 @@ func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
 	var hashedPassword = hashPassword(password, salt)
 
 	// Check if login is correct and get session
-	isLoggedIn, userId := tryLogin(username, hashedPassword, salt)
+	isLoggedIn, userId := tryLogin(username, hashedPassword)
 
 	// If login is correct, create session
 	var sessionKey, expireTime string
@@ -48,7 +48,7 @@ func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func tryLogin(username, hashedPassword, salt string) (isLoggedIn bool, userId int) {
+func tryLogin(username, hashedPassword string) (isLoggedIn bool, userId int) {
 	// Get login details from database
 	var query = `SELECT user_id, password FROM login_details WHERE username = ?`
 	lg, err := db.Query(query, username)

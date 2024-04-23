@@ -46,3 +46,34 @@ func Test_hashPassword(t *testing.T) {
 		}
 	}
 }
+
+type TryLoginTestCase struct {
+	username           string
+	hashedPassword     string
+	salt               string
+	expectedIsLoggedIn bool
+	expectedUserId     int
+}
+
+var tryLoginTestCases = []TryLoginTestCase{
+	{
+		username:           "admin",
+		hashedPassword:     "f51eb0b2f465c2ea64e8ff3b6ba96d6ff0e299c6645c367d6bde892527b6c493",
+		expectedIsLoggedIn: true,
+		expectedUserId:     12,
+	},
+}
+
+func Test_tryLogin(t *testing.T) {
+	for _, testCase := range tryLoginTestCases {
+		var gotIsLoggedIn, gotUserId = tryLogin(testCase.username, testCase.hashedPassword)
+		if (gotIsLoggedIn != testCase.expectedIsLoggedIn) &&
+			(gotUserId != testCase.expectedUserId) {
+			t.Errorf(
+				"got %t and %q, expected %t and %q",
+				gotIsLoggedIn, gotUserId, testCase.expectedIsLoggedIn, testCase.expectedUserId,
+			)
+		}
+	}
+
+}
