@@ -4,13 +4,13 @@ import (
 	"testing"
 )
 
-type HashPasswordTestCase struct {
+type hashPasswordTestCase struct {
 	password string
 	salt     string
 	expected string
 }
 
-var hashPasswordTestCases = []HashPasswordTestCase{
+var hashPasswordTestCases = []hashPasswordTestCase{
 	{
 		password: "myVerySimplePasswordHere",
 		salt:     "dadaf67409828e4ee168e1b667d9c013e524124576265c10231c3e18e66fa78c",
@@ -47,7 +47,7 @@ func Test_hashPassword(t *testing.T) {
 	}
 }
 
-type TryLoginTestCase struct {
+type tryLoginTestCase struct {
 	username           string
 	hashedPassword     string
 	salt               string
@@ -55,19 +55,32 @@ type TryLoginTestCase struct {
 	expectedUserId     int
 }
 
-var tryLoginTestCases = []TryLoginTestCase{
+var tryLoginTestCases = []tryLoginTestCase{
 	{
 		username:           "admin",
 		hashedPassword:     "f51eb0b2f465c2ea64e8ff3b6ba96d6ff0e299c6645c367d6bde892527b6c493",
 		expectedIsLoggedIn: true,
 		expectedUserId:     12,
 	},
+	{
+		username:           "john",
+		hashedPassword:     "088e22e8794e52d8b489c7064ff31ecf059c0f9d6535d66afd0cc635b0192473",
+		expectedIsLoggedIn: true,
+		expectedUserId:     0,
+	},
+	{
+		username:           "jane",
+		hashedPassword:     "jane",
+		expectedIsLoggedIn: false,
+		expectedUserId:     0,
+	},
 }
 
 func Test_tryLogin(t *testing.T) {
+	ConnectDatabase()
 	for _, testCase := range tryLoginTestCases {
 		var gotIsLoggedIn, gotUserId = tryLogin(testCase.username, testCase.hashedPassword)
-		if (gotIsLoggedIn != testCase.expectedIsLoggedIn) &&
+		if (gotIsLoggedIn != testCase.expectedIsLoggedIn) ||
 			(gotUserId != testCase.expectedUserId) {
 			t.Errorf(
 				"got %t and %q, expected %t and %q",
@@ -76,4 +89,64 @@ func Test_tryLogin(t *testing.T) {
 		}
 	}
 
+}
+
+type sessionExistsTestCase struct {
+	sessionKey string
+	expected   bool
+}
+
+var sessionExistsTestCases = []sessionExistsTestCase{
+	{
+		sessionKey: "12",
+		expected:   true,
+	},
+	{
+		sessionKey: "234234234234",
+		expected:   true,
+	},
+	{
+		sessionKey: "-",
+		expected:   false,
+	},
+}
+
+func Test_sessionExists(t *testing.T) {
+	ConnectDatabase()
+	for _, testCase := range sessionExistsTestCases {
+		var got = sessionExists(testCase.sessionKey)
+		if got != testCase.expected {
+			t.Errorf("got %t, expected %t", got, testCase.expected)
+		}
+	}
+}
+
+type getUserSaltTestCase struct {
+	username string
+	expected string
+}
+
+var getUserSaltTestCases = []getUserSaltTestCase{
+	{
+		username: "admin",
+		expected: "aboba228",
+	},
+	{
+		username: "john",
+		expected: "john",
+	},
+	{
+		username: "jane",
+		expected: "",
+	},
+}
+
+func Test_getUserSalt(t *testing.T) {
+	ConnectDatabase()
+	for _, testCase := range getUserSaltTestCases {
+		var got = getUserSalt(testCase.username)
+		if got != testCase.expected {
+			t.Errorf("got %q, expected %q", got, testCase.expected)
+		}
+	}
 }

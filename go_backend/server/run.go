@@ -18,20 +18,7 @@ type Response_Body struct {
 }
 
 func Run() {
-	cfg := mysql.NewConfig()
-	(*cfg).User = "remote"
-	(*cfg).Addr = "104.248.86.80:3306"
-	(*cfg).Passwd = "ts32YQ?!Twa2$Ej"
-	(*cfg).Net = "tcp"
-	(*cfg).DBName = "grade"
-	(*cfg).ParseTime = true
-	var err error
-	db, err = sql.Open("mysql", cfg.FormatDSN())
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	go ClearSessions()
+	ConnectDatabase()
 
 	// Create a new router
 	router := mux.NewRouter()
@@ -64,6 +51,23 @@ func Run() {
 			router,
 		))
 	}
+}
+
+func ConnectDatabase() {
+	cfg := mysql.NewConfig()
+	(*cfg).User = "remote"
+	(*cfg).Addr = "104.248.86.80:3306"
+	(*cfg).Passwd = "ts32YQ?!Twa2$Ej"
+	(*cfg).Net = "tcp"
+	(*cfg).DBName = "grade"
+	(*cfg).ParseTime = true
+	var err error
+	db, err = sql.Open("mysql", cfg.FormatDSN())
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	go ClearSessions()
 }
 
 // Define the CORS middleware
