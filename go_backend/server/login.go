@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -46,7 +46,6 @@ func ExecuteLogin(w http.ResponseWriter, r *http.Request) {
 	// Send response
 	var response = Response{LoginStatus: isLoggedIn, SessionKey: sessionKey, ExpireTime: expireTime}
 	json.NewEncoder(w).Encode(response)
-
 }
 
 func tryLogin(username, hashedPassword, salt string) (isLoggedIn bool, userId int) {
