@@ -49,7 +49,7 @@ func Run() {
 	router.HandleFunc("/searchSubjects", SearchSubjects).Methods("GET")
 	router.HandleFunc("/addUser", AddUser).Methods("GET")
 
-	var development = true
+	var development = false
 
 	if development {
 		// Start the HTTP server
