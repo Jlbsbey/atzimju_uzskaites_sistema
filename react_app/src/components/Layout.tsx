@@ -4,7 +4,7 @@ import '../styles/layout.css';
 const Layout = () => {
 	let title = "Grade";
 	let path = window.location.pathname;
-	if (path === "/kabul" || path === "/kabul/") {
+	if (path === "/kabul" || path === "/kabul/" || path === "/kabul-lq" || path === "/kabul-lq/") {
 		title = "Kabul International";
 	}
 

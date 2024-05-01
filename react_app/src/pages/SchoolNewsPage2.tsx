@@ -21,7 +21,7 @@ const SchoolNewsPage: React.FC = () => {
 			/>
 
 			<div style={{width: "85%"}}>
-				<PeVideo src={"https://negallery.ams3.cdn.digitaloceanspaces.com/temp/final-lq.mp4"}
+				<PeVideo src={"https://negallery.ams3.cdn.digitaloceanspaces.com/temp/final.mp4"}
 						 provider={"html5"}
 				/>
 			</div>
