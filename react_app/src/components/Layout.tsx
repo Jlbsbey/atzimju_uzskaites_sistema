@@ -1,19 +1,22 @@
 import { Outlet } from "react-router-dom";
 import '../styles/layout.css';
-import {getAuthCookie} from "../scripts/cookies";
 
 const Layout = () => {
-	let authKey = getAuthCookie();
+	let title = "Grade";
+	let path = window.location.pathname;
+	if (path === "/kabul" || path === "/kabul/") {
+		title = "Kabul International";
+	}
 
 	return (
 		<>
 			<div className="menu navbar">
 				<a className="menu-logo" href="/">
-					Grade
+					{title}
 				</a>
 				<div>
 					<a className="menu-link" href="/main/">
-						Grades
+						{title === "Grade" ? "Grades" : "News archive"}
 					</a>
 					<a className="menu-link" href="/user/">
 						My Profile
@@ -27,10 +30,10 @@ const Layout = () => {
 
 			<div className="footer">
 				<a className="footer-link" href="/about/">
-					About Grade
+					About {title}
 				</a>
 				<p className="footer-text">
-					© 2024 Grade
+					© 2024 {title}. All rights reserved.
 				</p>
 			</div>
 		</>
