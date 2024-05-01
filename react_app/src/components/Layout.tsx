@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import '../styles/layout.css';
 
 const Layout = () => {
-	let title = "Grade";
+	let title = "Grade1";
 	let path = window.location.pathname;
 	if (path === "/kabul" || path === "/kabul/") {
 		title = "Kabul International";
